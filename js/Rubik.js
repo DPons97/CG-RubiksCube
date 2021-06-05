@@ -4,7 +4,7 @@ const OFFSET_X = 1;
 const OFFSET_Y = 1;
 const OFFSET_Z = 1;
 
-const DELTA = 0.0001 // Delta for floating point comparison
+const DELTA = 0.0001 // Delta for floating point comparison     // TODO move to utils
 
 const RUBIK_ROT_SPEED = 1; // stores the rotation speed of the whole cube
 
@@ -56,7 +56,7 @@ class Rubik{
     rotateU(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[1][3], OFFSET_Y)){
+                if (float_equal(c.locaMatrix[7], OFFSET_Y)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateYTarget(this.isShift ? -90 : 90);
                 }
@@ -67,7 +67,7 @@ class Rubik{
     rotateD(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[1][3], -OFFSET_Y)){
+                if (float_equal(c.locaMatrix[7], -OFFSET_Y)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateYTarget(this.isShift ? -90 : 90);
                 }
@@ -78,7 +78,7 @@ class Rubik{
     rotateC(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[1][3], 0)){
+                if (float_equal(c.locaMatrix[7], 0)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateYTarget(this.isShift ? -90 : 90);
                 }
@@ -89,7 +89,7 @@ class Rubik{
     rotateF(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[2][3], -OFFSET_Z)){
+                if (float_equal(c.locaMatrix[11], -OFFSET_Z)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateZTarget(this.isShift ? -90 : 90);
                 }
@@ -100,7 +100,7 @@ class Rubik{
     rotateB(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[2][3], OFFSET_Z)){
+                if (float_equal(c.locaMatrix[11], OFFSET_Z)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateZTarget(this.isShift ? -90 : 90);
                 }
@@ -111,7 +111,7 @@ class Rubik{
     rotateH(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[2][3], 0)){
+                if (float_equal(c.locaMatrix[11], 0)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateZTarget(this.isShift ? -90 : 90);
                 }
@@ -122,7 +122,7 @@ class Rubik{
     rotateR(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[0][3], OFFSET_X)){
+                if (float_equal(c.locaMatrix[3], OFFSET_X)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateXTarget(this.isShift ? -90 : 90);
                 }
@@ -133,7 +133,7 @@ class Rubik{
     rotateL(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[0][3], OFFSET_X)){
+                if (float_equal(c.locaMatrix[3], OFFSET_X)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateXTarget(this.isShift ? -90 : 90);
                 }
@@ -144,7 +144,7 @@ class Rubik{
     rotateM(){
         this.children.forEach(c => 
             {
-                if (float_equal(c.locaMatrix[0][3], 0)){
+                if (float_equal(c.locaMatrix[3], 0)){
                     // if cubie belongs to up face i need to rotate around Y
                     c.updateXTarget(this.isShift ? -90 : 90);
                 }

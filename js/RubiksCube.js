@@ -5,8 +5,6 @@ var baseDir;
 
 function main() {
 
-    var lastUpdateTime = (new Date).getTime();
-
     // TODO: HERE LOAD STUFF 
 
 
@@ -18,21 +16,9 @@ function main() {
 
     drawScene();
 
-    function animate(){
-        var currentTime = (new Date).getTime();
-        if(lastUpdateTime){
-        var deltaC = (30 * (currentTime - lastUpdateTime)) / 1000.0;
-        cubeRx += deltaC;
-        cubeRy -= deltaC;
-        cubeRz += deltaC;
-        }
-        worldMatrix = utils.MakeWorld(  0.0, 0.0, 0.0, cubeRx, cubeRy, cubeRz, 1.0);
-        lastUpdateTime = currentTime;               
-    }
-
-
     function drawScene() {
-        
+        // TODO animate() all root elements in scene (in this case, only rubik)
+
         // RESET THE SCENE
         gl.clearColor(0.85, 0.85, 0.85, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -50,6 +36,7 @@ function main() {
     
         var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
     
+        // TODO rubik.updateWorldMatrix();
         
         // Compute all the matrices for rendering
         rubik.children.forEach(function(object) {
