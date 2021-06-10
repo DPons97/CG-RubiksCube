@@ -9,8 +9,8 @@ const DELTA = 0.0001 // Delta for floating point comparison     // TODO move to 
 const RUBIK_ROT_SPEED = 1; // stores the rotation speed of the whole cube
 
 function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
-    if (Math.abs(a - b) <= DELTA){
-        return true; 
+    if (Math.abs(a - b) <= DELTA) {
+        return true;
     } else {
         return false;
     }
@@ -22,9 +22,9 @@ function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
 // a reference to all the cubies nodes
 // an array of possible shaders
 // The order in which cubies are passed SHOULD not matter.
-class Rubik{
-    
-    constructor(cubies, shaders){
+class Rubik {
+
+    constructor(cubies, shaders) {
         this.children = cubies;
         this.shaders = shaders;
         this.currShader = 0;
@@ -38,10 +38,10 @@ class Rubik{
     }
 
     // changes the shader in a round robin fashion
-    nextShader(){
+    nextShader() {
         this.currShader++;
         if (this.currShader >= this.shaders.length) this.currShader = 0;
-        this.children.forEach(c => { c.setShader(this.shaders[this.currShader])})
+        this.children.forEach(c => { c.setShader(this.shaders[this.currShader]) })
     }
 
     // Checking cubies that belong to a specific face:
@@ -53,116 +53,107 @@ class Rubik{
     // where X,Y,Z are the offset of the cubie with respect to the center of the rubik's cube
 
     // Up face has all the cubies with positive Y offset
-    rotateU(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[7], OFFSET_Y)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateYTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateU() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[7], OFFSET_Y)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateYTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
-    
+
     // Down face has all the cubies with negative Y offset
-    rotateD(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[7], -OFFSET_Y)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateYTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateD() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[7], -OFFSET_Y)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateYTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // C face has all the cubies with Y offset equal to 0
-    rotateC(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[7], 0)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateYTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateC() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[7], 0)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateYTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // Front face has all the cubies with negative Z offset
-    rotateF(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[11], -OFFSET_Z)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateZTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateF() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[11], -OFFSET_Z)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateZTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
-    
+
     // Back face has all the cubies with negative Z offset
-    rotateB(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[11], OFFSET_Z)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateZTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateB() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[11], OFFSET_Z)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateZTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // H face has all the cubies with Z offset equal to 0
-    rotateH(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[11], 0)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateZTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateH() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[11], 0)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateZTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // Front face has all the cubies with positive X offset
-    rotateR(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[3], OFFSET_X)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateXTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateR() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[3], OFFSET_X)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateXTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
-    
+
     // Back face has all the cubies with negative X offset
-    rotateL(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[3], OFFSET_X)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateXTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateL() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[3], OFFSET_X)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateXTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // H face has all the cubies with X offset equal to 0
-    rotateM(){
-        this.children.forEach(c => 
-            {
-                if (float_equal(c.locaMatrix[3], 0)){
-                    // if cubie belongs to up face i need to rotate around Y
-                    c.updateXTarget(this.isShift ? -90 : 90);
-                }
-            });
+    rotateM() {
+        this.children.forEach(c => {
+            if (float_equal(c.locaMatrix[3], 0)) {
+                // if cubie belongs to up face i need to rotate around Y
+                c.updateXTarget(this.isShift ? -90 : 90);
+            }
+        });
     }
 
     // Rotates the whole cube around X axis 
-    rotateCubeX(positive){
+    rotateCubeX(positive) {
         this.rotateX(positive ? speed : -speed);
     }
 
     // Rotates the whole cube around X axis 
-    rotateCubeY(positive){
+    rotateCubeY(positive) {
         this.rotateY(positive ? speed : -speed);
     }
 
-    processKeyDown(e){
-        console.log("Key down: "+ e.code);
+    processKeyDown(e) {
+        console.log("Key down: " + e.code);
         switch (e.code) {
             case "ShiftLeft":
             case "ShiftRight":
@@ -212,8 +203,8 @@ class Rubik{
         }
     }
 
-    processKeyUp(e){
-        console.log("Key up: "+ e.code);
+    processKeyUp(e) {
+        console.log("Key up: " + e.code);
         switch (e.code) {
             case "ShiftLeft":
             case "ShiftRight":
@@ -226,7 +217,7 @@ class Rubik{
 
     // TODO: this
     // idea: once we have the model, store a copy of initial positions and check agaisnt it to verify victory
-    checkVictory(){
+    checkVictory() {
         return false
     }
 }

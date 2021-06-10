@@ -1,6 +1,6 @@
 var program;
 var gl;
-var shaderDir; 
+var shaderDir;
 var baseDir;
 
 function main() {
@@ -22,24 +22,24 @@ function main() {
         // RESET THE SCENE
         gl.clearColor(0.85, 0.85, 0.85, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
+
         // Compute the projection matrix
         var aspect = gl.canvas.width / gl.canvas.height;
         var projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
-    
+
         // Compute the camera matrix using look at.
         var cameraPosition = [0.0, -200.0, 0.0];
         var target = [0.0, 0.0, 0.0];
         var up = [0.0, 0.0, 1.0];
         var cameraMatrix = utils.LookAt(cameraPosition, target, up);
         var viewMatrix = utils.invertMatrix(cameraMatrix);
-    
+
         var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
-    
+
         // TODO rubik.updateWorldMatrix();
-        
+
         // Compute all the matrices for rendering
-        rubik.children.forEach(function(object) {
+        /* rubik.children.forEach(function(object) {
           
             gl.useProgram(object.drawInfo.programInfo);
             
@@ -60,8 +60,8 @@ function main() {
             gl.drawElements(gl.TRIANGLES, object.drawInfo.bufferLength, gl.UNSIGNED_SHORT, 0 );
             
     
-        });
-    
+        }); */
+
         window.requestAnimationFrame(drawScene);
     }
 }
@@ -69,29 +69,30 @@ function main() {
 
 
 
-async function init(){
-  
+async function init() {
+
     var path = window.location.pathname;
     var page = path.split("/").pop();
     baseDir = window.location.href.replace(page, '');
-    shaderDir = baseDir+"shaders/";
+    shaderDir = baseDir + "shaders/";
 
-    var canvas = document.getElementById("c");
+    var canvas = document.getElementById("canvas");
     gl = canvas.getContext("webgl2");
     if (!gl) {
         document.write("GL context not opened");
         return;
     }
+    utils.resizeCanvasToDisplaySize(gl.canvas);
 
     await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
-      var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
-      console.log(vertexShader);
-      var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-      program = utils.createProgram(gl, vertexShader, fragmentShader);
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        console.log(vertexShader);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+        program = utils.createProgram(gl, vertexShader, fragmentShader);
 
     });
     gl.useProgram(program);
-    
+
     main();
 }
 
