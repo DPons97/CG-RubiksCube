@@ -6,7 +6,7 @@ const OFFSET_Z = 1;
 
 const DELTA = 0.0001 // Delta for floating point comparison     // TODO move to utils
 
-const RUBIK_ROT_SPEED = 1; // stores the rotation speed of the whole cube
+const RUBIK_ROT_SPEED = 10; // stores the rotation speed of the whole cube
 
 function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
     if (Math.abs(a - b) <= DELTA) {
@@ -59,7 +59,7 @@ Rubik.prototype.nextShader = function() {
 // where X,Y,Z are the offset of the cubie with respect to the center of the rubik's cube
 
 // Up face has all the cubies with positive Y offset
-Rubik.prototype.rotateU = function() {
+Rubik.prototype.rotateB = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -70,7 +70,7 @@ Rubik.prototype.rotateU = function() {
 }
 
 // Down face has all the cubies with negative Y offset
-Rubik.prototype.rotateD = function() {
+Rubik.prototype.rotateF = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -81,7 +81,7 @@ Rubik.prototype.rotateD = function() {
 }
 
 // C face has all the cubies with Y offset equal to 0
-Rubik.prototype.rotateC = function() {
+Rubik.prototype.rotateH = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], 0)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -92,7 +92,7 @@ Rubik.prototype.rotateC = function() {
 }
 
 // Front face has all the cubies with negative Z offset
-Rubik.prototype.rotateF = function() {
+Rubik.prototype.rotateU = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -103,7 +103,7 @@ Rubik.prototype.rotateF = function() {
 }
 
 // Back face has all the cubies with negative Z offset
-Rubik.prototype.rotateB = function() {
+Rubik.prototype.rotateD = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -114,7 +114,7 @@ Rubik.prototype.rotateB = function() {
 }
 
 // H face has all the cubies with Z offset equal to 0
-Rubik.prototype.rotateH = function() {
+Rubik.prototype.rotateC = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], 0)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -127,7 +127,7 @@ Rubik.prototype.rotateH = function() {
 // Front face has all the cubies with positive X offset
 Rubik.prototype.rotateR = function() {
     this.children.forEach(c => {
-        if (float_equal(c.fictMatrix[3], OFFSET_X)) {
+        if (float_equal(c.fictMatrix[3], -OFFSET_X)) {
             // if cubie belongs to up face i need to rotate around Y
             c.updateXTarget(this.isShift ? -90 : 90);
             c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);

@@ -176,6 +176,7 @@ async function main() {
 
         var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
 
+        rubik.animate();
         rubik.updateWorldMatrix();
 
         // Compute all the matrices for rendering

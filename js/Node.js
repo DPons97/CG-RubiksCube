@@ -104,7 +104,7 @@ class Node {
      */
     updateXTarget(delta) {
         this.deltaAngleX += delta;
-        console.log(this.deltaAngleX);
+        //console.log(this.deltaAngleX);
     }
 
     /**
@@ -122,36 +122,38 @@ class Node {
     }
 
     animate(deltaT) {
-        if (!deltaT){
-            deltaT = (currentTime - this.lastUpdateTime)/1000;
-        }
-        var currentTime = (new Date).getTime();
         if (this.lastUpdateTime) {
+            var currentTime = (new Date).getTime();
+
+
+            if (!deltaT){
+                deltaT = (currentTime - this.lastUpdateTime)/1000;
+            }
             var deltaAngle = deltaT * ANIM_ROT_SPEED;
 
             // Update rotations AROUND ORIGIN AXES based on targets. Animation hierarchy: X -> Y -> Z
             if (Math.abs(this.deltaAngleX) > DELTA) {
                 if (this.deltaAngleX < 0) deltaAngle = -deltaAngle;
+                if (Math.abs(this.deltaAngleX) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleX;
 
                 // Multiply local matrix for a rotation around X axis through [0,0,0] (need to change rotation axis wrt local matrix)
                 this.localMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(deltaAngle), this.localMatrix);
 
-                if (this.deltaAngleX > 0  && deltaAngle > this.deltaAngleX || this.deltaAngleX < 0  && deltaAngle < this.deltaAngleX) {
-                    this.deltaAngleX = 0;
-                }
                 this.deltaAngleX -= deltaAngle;
             } else if (Math.abs(this.deltaAngleY) > DELTA) {
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
+                if (Math.abs(this.deltaAngleY) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleY;
 
                 // Multiply local matrix for a rotation around Y axis through [0,0,0] (need to change rotation axis wrt local matrix) 
-                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.deltaAngleX), this.localMatrix);
+                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(deltaAngle), this.localMatrix);
 
                 this.deltaAngleY -= deltaAngle;
             } else if (Math.abs(this.deltaAngleZ) > DELTA) {
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
+                if (Math.abs(this.deltaAngleZ) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleZ;
 
                 // Multiply local matrix for a rotation around Z axis through [0,0,0] (need to change rotation axis wrt local matrix)
-                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.deltaAngleX), this.localMatrix);
+                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(deltaAngle), this.localMatrix);
 
                 this.deltaAngleZ -= deltaAngle;
             }
