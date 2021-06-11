@@ -1,5 +1,5 @@
 export default class Cubie extends Node {
-    constructor(objModel, fictMatrix) {
+    constructor(objModel, fictPos) {
         super()
         this.fictMatrix = utils.makeTransitionMatrix(fictPos[0], fictPos[1], fictPos[2]); // matrix that keeps a fictitious position to find faces
         this.drawInfo = objModel
