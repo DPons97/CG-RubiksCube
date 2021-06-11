@@ -1,14 +1,14 @@
 export default class Cubie extends Node {
-    constructor(program, vao) {
+    constructor(objModel) {
         super()
-        this.drawInfo = {
-            materialColor: [0.6, 0.6, 0.0],
-            programInfo: program,
-            //bufferLength: indexData.length,
-            vertexArray: vao,
-        };
+        this.drawInfo = objModel
+        this.vao = null
         //this.targetAngle
         //this.lastUpdate
+    }
+
+    setVao(vao) {
+        this.vao = vao
     }
 
     animate() {

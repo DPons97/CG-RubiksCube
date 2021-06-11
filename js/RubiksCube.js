@@ -2,11 +2,8 @@ var program;
 var gl;
 var shaderDir;
 var baseDir;
-var vao;
 var viewMatrix;
 var cameraMatrix;
-var projectionMatrix;
-var worldMatrix;
 var rubik;
 
 import Rubik from './Rubik.js';
@@ -14,19 +11,21 @@ import Cubie from './Cubie.js';
 
 async function loadModel(modelName) {
     //This line must be in an async function
-    var pathToModel = baseDir + "/models/"
-    var objStr = await utils.get_objstr(pathToModel + modelName);
+    var pathToModel = baseDir + "models/"
+    try {
+        var objStr = await utils.get_objstr(pathToModel + modelName);
+    } catch (error) {
+        console.error(error)
+        return
+    }
+
     var objModel = new OBJ.Mesh(objStr);
-    OBJ.initMeshBuffers(gl, mesh); // https://www.npmjs.com/package/webgl-obj-loader/v/2.0.2 find initMeshBuffers and check examples
+    OBJ.initMeshBuffers(gl, objModel); // https://www.npmjs.com/package/webgl-obj-loader/v/2.0.2 find initMeshBuffers and check examples
 
     return objModel // ritorniamo direttamente l'oggeto
 }
 
-function main() {
-
-    var model = loadModel("cube00.obj")
-
-
+async function main() {
 
     var dirLightAlpha = -utils.degToRad(-60);
     var dirLightBeta = -utils.degToRad(120);
@@ -48,32 +47,46 @@ function main() {
     var lightColorHandle = gl.getUniformLocation(program, 'lightColor');
     var normalMatrixPositionHandle = gl.getUniformLocation(program, 'nMatrix');
 
-    var vao = gl.createVertexArray();
+    // SET UP THE CUBIES AND RUBIK OBJECTS
+    var cubies = [];
 
-    gl.bindVertexArray(vao);
-    var positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model[0]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    var normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model[1]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(normalAttributeLocation);
-    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    var indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model[2]), gl.STATIC_DRAW);
-
-    var cubies = new Array(9);
-    // TODO: SET UP THE CUBIES AND RUBIK OBJECTS
-    for (let i = 0; i < 9; i++) {
-        cubies[i] = new Cubie(program, vao);
+    let i = 0
+    for (let x = 0; x < 3; x++) {
+        for (let z = 0; z < 3; z++) {
+            for (let y = 0; y < 3; y++) {
+                if (x == 1 && y == 1 && z == 1) { i++ }
+                else {
+                    var model = await loadModel("cube" + x + z + ((y == 1) ? '_M' : (y < 1) ? '_B' : '') + '.obj')
+                    cubies[i++] = new Cubie(model);
+                }
+            }
+        }
     }
 
-    rubik = new Rubik(cubies, [])
+    cubies.forEach((cubie) => {
+        var vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+        cubie.setVao(vao)
+
+        var positionBuffer = cubie.drawInfo.vertexBuffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.vertices), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+
+        var normalBuffer = cubie.drawInfo.normalBuffer;
+        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.vertexNormal), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(normalAttributeLocation);
+        gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+        var indexBuffer = cubie.drawInfo.indexBuffer;
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubie.drawInfo.indices), gl.STATIC_DRAW);
+
+    })
+
+    rubik = new Rubik(cubies, [program])
 
     drawScene();
 
@@ -89,7 +102,7 @@ function main() {
         var projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
 
         // Compute the camera matrix using look at.
-        var cameraPosition = [0.0, -200.0, 0.0];
+        var cameraPosition = [10.0, -10.0, 0.0];
         var target = [0.0, 0.0, 0.0];
         var up = [0.0, 0.0, 1.0];
         cameraMatrix = utils.LookAt(cameraPosition, target, up);
@@ -100,11 +113,11 @@ function main() {
         rubik.updateWorldMatrix();
 
         // Compute all the matrices for rendering
-        rubik.children.forEach(function (object) {
-            gl.useProgram(object.drawInfo.programInfo);
+        rubik.children.forEach(function (cubie) {
+            gl.useProgram(program);
 
-            var projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, object.worldMatrix);
-            var normalMatrix = utils.invertMatrix(utils.transposeMatrix(object.worldMatrix));
+            var projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, cubie.worldMatrix);
+            var normalMatrix = utils.invertMatrix(utils.transposeMatrix(cubie.worldMatrix));
 
             // SINCE WE'LL HAVE DIFFERENT PROGRAMS THAT MAY REQUIRE PASSING DIFFERENT STUFF
             // WE MAY CONSIDER EXTRACTING THIS PART IN WebGL_utils.js AND HAVING A SWITCH CASE WITH CALLS TO
@@ -112,12 +125,12 @@ function main() {
             gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
             gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalMatrix));
 
-            gl.uniform3fv(materialDiffColorHandle, object.drawInfo.materialColor);
+            gl.uniform3fv(materialDiffColorHandle, [1.0, 0.0, 0.0]);
             gl.uniform3fv(lightColorHandle, directionalLightColor);
             gl.uniform3fv(lightDirectionHandle, directionalLight);
 
-            gl.bindVertexArray(object.drawInfo.vertexArray);
-            gl.drawElements(gl.TRIANGLES, object.drawInfo.bufferLength, gl.UNSIGNED_SHORT, 0);
+            gl.bindVertexArray(cubie.vao);
+            gl.drawElements(gl.TRIANGLES, cubie.drawInfo.indices.length, gl.UNSIGNED_SHORT, 0);
 
         });
 
@@ -143,7 +156,6 @@ async function init() {
 
     await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
-        console.log(vertexShader);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         program = utils.createProgram(gl, vertexShader, fragmentShader);
 
