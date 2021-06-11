@@ -1,4 +1,4 @@
-const ANIM_ROT_SPEED = 10;       // Degrees/s        // TODO tweak
+const ANIM_ROT_SPEED = 360;       // Degrees/s        // TODO tweak
 const DELTA = 0.0001            // Delta for floating point comparison      // TODO move to utils
 
 /**
@@ -67,7 +67,7 @@ class Node {
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
         this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
             utils.invertMatrix(inverseTrans),
-            utils.MakeRotateXMatrix(deltaAngle)),
+            utils.MakeRotateXMatrix(delta)),
             inverseTrans),
             this.localMatrix
         );
@@ -80,7 +80,7 @@ class Node {
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
         this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
             utils.invertMatrix(inverseTrans),
-            utils.MakeRotateYMatrix(deltaAngle)),
+            utils.MakeRotateYMatrix(delta)),
             inverseTrans),
             this.localMatrix
         );
@@ -93,7 +93,7 @@ class Node {
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
         this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
             utils.invertMatrix(inverseTrans),
-            utils.MakeRotateZMatrix(deltaAngle)),
+            utils.MakeRotateZMatrix(delta)),
             inverseTrans),
             this.localMatrix
         );
@@ -104,6 +104,7 @@ class Node {
      */
     updateXTarget(delta) {
         this.deltaAngleX += delta;
+        console.log(this.deltaAngleX);
     }
 
     /**
@@ -120,28 +121,33 @@ class Node {
         this.deltaAngleZ += delta;
     }
 
-    animate() {
+    animate(deltaT) {
+        if (!deltaT){
+            deltaT = (currentTime - this.lastUpdateTime)/1000;
+        }
         var currentTime = (new Date).getTime();
-        if (lastUpdateTime) {
-            var deltaT = (currentTime - lastUpdateTime);
+        if (this.lastUpdateTime) {
             var deltaAngle = deltaT * ANIM_ROT_SPEED;
 
             // Update rotations AROUND ORIGIN AXES based on targets. Animation hierarchy: X -> Y -> Z
-            if (Math.abs(this.deltaAngleX) < DELTA) {
+            if (Math.abs(this.deltaAngleX) > DELTA) {
                 if (this.deltaAngleX < 0) deltaAngle = -deltaAngle;
 
                 // Multiply local matrix for a rotation around X axis through [0,0,0] (need to change rotation axis wrt local matrix)
-                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.deltaAngleX), this.localMatrix);
+                this.localMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(deltaAngle), this.localMatrix);
 
+                if (this.deltaAngleX > 0  && deltaAngle > this.deltaAngleX || this.deltaAngleX < 0  && deltaAngle < this.deltaAngleX) {
+                    this.deltaAngleX = 0;
+                }
                 this.deltaAngleX -= deltaAngle;
-            } else if (Math.abs(this.deltaAngleY) < DELTA) {
+            } else if (Math.abs(this.deltaAngleY) > DELTA) {
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
 
                 // Multiply local matrix for a rotation around Y axis through [0,0,0] (need to change rotation axis wrt local matrix) 
                 this.localMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.deltaAngleX), this.localMatrix);
 
                 this.deltaAngleY -= deltaAngle;
-            } else if (Math.abs(this.deltaAngleZ) < DELTA) {
+            } else if (Math.abs(this.deltaAngleZ) > DELTA) {
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
 
                 // Multiply local matrix for a rotation around Z axis through [0,0,0] (need to change rotation axis wrt local matrix)
@@ -151,9 +157,9 @@ class Node {
             }
 
         }
-        lastUpdateTime = currentTime;
+        this.lastUpdateTime = currentTime;
 
-        // Also animate children
-        this.children.forEach(c => c.animate());
+        this.children.forEach(c => c.animate(deltaT)); // need to make sure delta T is same foreach cubies or rotation fucks up
+
     }
 }

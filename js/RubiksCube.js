@@ -57,12 +57,12 @@ async function main() {
                 if (x == 1 && y == 1 && z == 1) { i++ }
                 else {
                     var model = await loadModel("cube" + x + z + ((y == 1) ? '_M' : (y < 1) ? '_B' : '') + '.obj')
-                    cubies[i++] = new Cubie(model);
+                    cubies[i++] = new Cubie(model, [x-1,y-1,z-1]);
                 }
             }
         }
     }
-
+    console.log(cubies);
     cubies.forEach((cubie) => {
         var vao = gl.createVertexArray();
         gl.bindVertexArray(vao);
@@ -87,6 +87,72 @@ async function main() {
     })
 
     rubik = new Rubik(cubies, [program])
+    rubik.initKeyBinds();
+
+    console.log(rubik.children);
+
+    document.onkeydown = function (e) {
+        console.log("Key down: " + e.code);
+        switch (e.code) {
+            case "ShiftLeft":
+            case "ShiftRight":
+                rubik.isShift = true;
+                break;
+            case "KeyU": // U for up face
+                rubik.rotateU();
+                break;
+            case "KeyD": // D for down face
+                rubik.rotateD();
+                break;
+            case "KeyC": // C for central face parallel to U and D
+                rubik.rotateC();
+                break;
+            case "KeyF": // F for front face
+                rubik.rotateF();
+                break;
+            case "KeyB": // B for back face
+                rubik.rotateB();
+                break;
+            case "KeyH": // H for central face parallel to F and B
+                rubik.rotateH();
+                break;
+            case "KeyR": // R for right face
+                rubik.rotateR();
+                break;
+            case "KeyL": // L for left face
+                rubik.rotateL();
+                break;
+            case "KeyM": // M for central face parallel to R and L
+                rubik.rotateM();
+                break;
+            case "ArrowDown": // Arrows to rotate whole cube
+                rubik.rotateCubeX(true)
+                break;
+            case "ArrowUp": // Arrows to rotate whole cube
+                rubik.rotateCubeX(false)
+                break;
+            case "ArrowRight": // Arrows to rotate whole cube
+                rubik.rotateCubeY(true)
+                break;
+            case "ArrowLeft": // Arrows to rotate whole cube
+                rubik.rotateCubeY(false)
+                break;
+            default:
+                break;
+        }
+    }
+    
+    document.onkeyup = function (e) {
+        console.log("Key up: " + e.code);
+        switch (e.code) {
+            case "ShiftLeft":
+            case "ShiftRight":
+                rubik.isShift = false;
+                break;
+            default:
+                break;
+        }
+    }
 
     drawScene();
 
@@ -114,6 +180,7 @@ async function main() {
 
         // Compute all the matrices for rendering
         rubik.children.forEach(function (cubie) {
+            //console.log(cubie);
             gl.useProgram(program);
 
             var projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, cubie.worldMatrix);

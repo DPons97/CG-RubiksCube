@@ -26,208 +26,151 @@ export default class Rubik extends Node {
 
     constructor(cubies, shaders) {
         super()
-        this.children = cubies;
+        console.log(cubies);
         this.shaders = shaders;
         this.currShader = 0;
         this.isShift = false;
-        this.children.forEach(child => {
-            child.setParent(this);
+        cubies.forEach(cubie => {
+            cubie.setParent(this);
             //child.setShader(this.shaders[this.currShader]);
         });
-        document.onkeydown = this.processKeyDown;
-        document.onkeyup = this.processKeyUp;
-    }
-
-    // changes the shader in a round robin fashion
-    nextShader() {
-        this.currShader++;
-        if (this.currShader >= this.shaders.length) this.currShader = 0;
-        this.children.forEach(c => { c.setShader(this.shaders[this.currShader]) })
-    }
-
-    // Checking cubies that belong to a specific face:
-    // cubie fictMatrix should be something like
-    // 1  X
-    //  1 Y
-    //   1Z
-    // 0001
-    // where X,Y,Z are the offset of the cubie with respect to the center of the rubik's cube
-
-    // Up face has all the cubies with positive Y offset
-    rotateU() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateYTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Down face has all the cubies with negative Y offset
-    rotateD() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateYTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // C face has all the cubies with Y offset equal to 0
-    rotateC() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[7], 0)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateYTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Front face has all the cubies with negative Z offset
-    rotateF() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateZTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Back face has all the cubies with negative Z offset
-    rotateB() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateZTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // H face has all the cubies with Z offset equal to 0
-    rotateH() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[11], 0)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateZTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Front face has all the cubies with positive X offset
-    rotateR() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[3], OFFSET_X)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateXTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Back face has all the cubies with negative X offset
-    rotateL() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[3], OFFSET_X)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateXTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // H face has all the cubies with X offset equal to 0
-    rotateM() {
-        this.children.forEach(c => {
-            if (float_equal(c.fictMatrix[3], 0)) {
-                // if cubie belongs to up face i need to rotate around Y
-                c.updateXTarget(this.isShift ? -90 : 90);
-                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
-            }
-        });
-    }
-
-    // Rotates the whole cube around X axis 
-    rotateCubeX(positive) {
-        this.rotateX(positive ? speed : -speed);
-    }
-
-    // Rotates the whole cube around X axis 
-    rotateCubeY(positive) {
-        this.rotateY(positive ? speed : -speed);
-    }
-
-    processKeyDown(e) {
-        console.log("Key down: " + e.code);
-        switch (e.code) {
-            case "ShiftLeft":
-            case "ShiftRight":
-                this.isShift = true;
-                break;
-            case "KeyU": // U for up face
-                this.rotateU();
-                break;
-            case "KeyD": // D for down face
-                this.rotateD();
-                break;
-            case "KeyC": // C for central face parallel to U and D
-                this.rotateC();
-                break;
-            case "KeyF": // F for front face
-                this.rotateF();
-                break;
-            case "KeyB": // B for back face
-                this.rotateB();
-                break;
-            case "KeyH": // H for central face parallel to F and B
-                this.rotateH();
-                break;
-            case "KeyR": // R for right face
-                this.rotateR();
-                break;
-            case "KeyL": // L for left face
-                this.rotateL();
-                break;
-            case "KeyM": // M for central face parallel to R and L
-                this.rotateM();
-                break;
-            case "ArrowDown": // Arrows to rotate whole cube
-                this.rotateCubeX(true)
-                break;
-            case "ArrowUp": // Arrows to rotate whole cube
-                this.rotateCubeX(false)
-                break;
-            case "ArrowRight": // Arrows to rotate whole cube
-                this.rotateCubeY(true)
-                break;
-            case "ArrowLeft": // Arrows to rotate whole cube
-                this.rotateCubeY(false)
-                break;
-            default:
-                break;
-        }
-    }
-
-    processKeyUp(e) {
-        console.log("Key up: " + e.code);
-        switch (e.code) {
-            case "ShiftLeft":
-            case "ShiftRight":
-                isShift = false;
-                break;
-            default:
-                break;
-        }
-    }
-
-    // TODO: this
-    // idea: once we have the model, store a copy of initial positions and check agaisnt it to verify victory
-    checkVictory() {
-        return false
     }
 }
+
+// initializes key binds
+Rubik.prototype.initKeyBinds = function() {
+        document.onkeydown = this.processKeyDown;
+        document.onkeyup = this.processKeyUp;
+}
+
+// changes the shader in a round robin fashion
+Rubik.prototype.nextShader = function() {
+    this.currShader++;
+    if (this.currShader >= this.shaders.length) this.currShader = 0;
+    this.children.forEach(c => { c.setShader(this.shaders[this.currShader]) })
+}
+
+// Checking cubies that belong to a specific face:
+// cubie fictMatrix should be something like
+// 1  X
+//  1 Y
+//   1Z
+// 0001
+// where X,Y,Z are the offset of the cubie with respect to the center of the rubik's cube
+
+// Up face has all the cubies with positive Y offset
+Rubik.prototype.rotateU = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateYTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Down face has all the cubies with negative Y offset
+Rubik.prototype.rotateD = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateYTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// C face has all the cubies with Y offset equal to 0
+Rubik.prototype.rotateC = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[7], 0)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateYTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Front face has all the cubies with negative Z offset
+Rubik.prototype.rotateF = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateZTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Back face has all the cubies with negative Z offset
+Rubik.prototype.rotateB = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateZTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// H face has all the cubies with Z offset equal to 0
+Rubik.prototype.rotateH = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[11], 0)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateZTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Front face has all the cubies with positive X offset
+Rubik.prototype.rotateR = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[3], OFFSET_X)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateXTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Back face has all the cubies with negative X offset
+Rubik.prototype.rotateL = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[3], OFFSET_X)) {
+            console.log(c);
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateXTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// H face has all the cubies with X offset equal to 0
+Rubik.prototype.rotateM = function() {
+    this.children.forEach(c => {
+        if (float_equal(c.fictMatrix[3], 0)) {
+            // if cubie belongs to up face i need to rotate around Y
+            c.updateXTarget(this.isShift ? -90 : 90);
+            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+        }
+    });
+}
+
+// Rotates the whole cube around X axis 
+Rubik.prototype.rotateCubeX = function (positive) {
+    this.rotateX(positive ? RUBIK_ROT_SPEED : -RUBIK_ROT_SPEED);
+}
+
+// Rotates the whole cube around X axis 
+Rubik.prototype.rotateCubeY = function (positive) {
+    this.rotateY(positive ? RUBIK_ROT_SPEED : -RUBIK_ROT_SPEED);
+}
+
+// TODO: this
+// idea: once we have the model, store a copy of initial positions and check agaisnt it to verify victory
+Rubik.prototype.checkVictory = function() {
+    return false
+}
+
