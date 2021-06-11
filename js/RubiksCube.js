@@ -57,7 +57,7 @@ async function main() {
                 if (x == 1 && y == 1 && z == 1) { i++ }
                 else {
                     var model = await loadModel("cube" + x + z + ((y == 1) ? '_M' : (y < 1) ? '_B' : '') + '.obj')
-                    cubies[i++] = new Cubie(model, [x-1,y-1,z-1]);
+                    cubies[i++] = new Cubie(model, [-x+1,y-1,-z+1]);
                 }
             }
         }
@@ -168,7 +168,7 @@ async function main() {
         var projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
 
         // Compute the camera matrix using look at.
-        var cameraPosition = [10.0, -10.0, 0.0];
+        var cameraPosition = [10, -10, 0];
         var target = [0.0, 0.0, 0.0];
         var up = [0.0, 0.0, 1.0];
         cameraMatrix = utils.LookAt(cameraPosition, target, up);
