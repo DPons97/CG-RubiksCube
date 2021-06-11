@@ -22,16 +22,17 @@ function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
 // a reference to all the cubies nodes
 // an array of possible shaders
 // The order in which cubies are passed SHOULD not matter.
-class Rubik {
+export default class Rubik extends Node {
 
     constructor(cubies, shaders) {
+        super()
         this.children = cubies;
         this.shaders = shaders;
         this.currShader = 0;
         this.isShift = false;
-        cubies.forEach(c => {
-            c.setParent(this);
-            c.setShader(this.shaders[this.currShader]);
+        this.children.forEach(child => {
+            child.setParent(this);
+            //child.setShader(this.shaders[this.currShader]);
         });
         document.onkeydown = this.processKeyDown;
         document.onkeyup = this.processKeyUp;
@@ -159,31 +160,31 @@ class Rubik {
             case "ShiftRight":
                 this.isShift = true;
                 break;
-            case "keyU": // U for up face
+            case "KeyU": // U for up face
                 this.rotateU();
                 break;
-            case "keyD": // D for down face
+            case "KeyD": // D for down face
                 this.rotateD();
                 break;
-            case "keyC": // C for central face parallel to U and D
+            case "KeyC": // C for central face parallel to U and D
                 this.rotateC();
                 break;
-            case "keyF": // F for front face
+            case "KeyF": // F for front face
                 this.rotateF();
                 break;
-            case "keyB": // B for back face
+            case "KeyB": // B for back face
                 this.rotateB();
                 break;
-            case "keyH": // H for central face parallel to F and B
+            case "KeyH": // H for central face parallel to F and B
                 this.rotateH();
                 break;
-            case "keyR": // R for right face
+            case "KeyR": // R for right face
                 this.rotateR();
                 break;
-            case "keyL": // L for left face
+            case "KeyL": // L for left face
                 this.rotateL();
                 break;
-            case "keyM": // M for central face parallel to R and L
+            case "KeyM": // M for central face parallel to R and L
                 this.rotateM();
                 break;
             case "ArrowDown": // Arrows to rotate whole cube
