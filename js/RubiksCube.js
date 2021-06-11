@@ -12,9 +12,22 @@ var rubik;
 import Rubik from './Rubik.js';
 import Cubie from './Cubie.js';
 
+async function loadModel(modelName) {
+    //This line must be in an async function
+    var pathToModel = baseDir + "/models/"
+    var objStr = await utils.get_objstr(pathToModel + modelName);
+    var objModel = new OBJ.Mesh(objStr);
+    var modelVertices = objModel.vertices; //Array of vertices
+    var modelNormals = objModel.normals; //Array of normals
+    var modelIndices = objModel.indices; //Array of indices
+    var modelTexCoords = objModel.textures; //Array of uv coordinate
+    return [modelVertices, modelNormals, modelIndices, modelTexCoords]
+}
+
 function main() {
 
-    // TODO: HERE LOAD STUFF 
+    var model = loadModel("cube00.obj")
+
     var dirLightAlpha = -utils.degToRad(-60);
     var dirLightBeta = -utils.degToRad(120);
     var directionalLight = [Math.cos(dirLightAlpha) * Math.cos(dirLightBeta),
@@ -40,19 +53,19 @@ function main() {
     gl.bindVertexArray(vao);
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPositionData), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model[0]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
     var normalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model[1]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(normalAttributeLocation);
     gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
     var indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model[2]), gl.STATIC_DRAW);
 
     var cubies = new Array(9);
     // TODO: SET UP THE CUBIES AND RUBIK OBJECTS

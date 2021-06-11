@@ -531,4 +531,25 @@ var utils = {
         }
     },
 
+    //**** MODEL UTILS
+    // Function to load a 3D model in JSON format
+    get_json: async function (url, func) {
+        var response = await fetch(url);
+        if (!response.ok) {
+            alert('Network response was not ok');
+            return;
+        }
+        var json = await response.json();
+        func(json);
+    },
+    get_objstr: async function (url) {
+        var response = await fetch(url);
+        if (!response.ok) {
+            alert('Network response was not ok');
+            return;
+        }
+        var text = await response.text();
+        return text;
+    },
+
 }

@@ -4,7 +4,7 @@ export default class Cubie extends Node {
         this.drawInfo = {
             materialColor: [0.6, 0.6, 0.0],
             programInfo: program,
-            bufferLength: indexData.length,
+            //bufferLength: indexData.length,
             vertexArray: vao,
         };
         //this.targetAngle
