@@ -46,7 +46,7 @@ export default class Rubik extends Node {
     }
 
     // Checking cubies that belong to a specific face:
-    // cubie localMatrix should be something like
+    // cubie fictMatrix should be something like
     // 1  X
     //  1 Y
     //   1Z
@@ -56,9 +56,10 @@ export default class Rubik extends Node {
     // Up face has all the cubies with positive Y offset
     rotateU() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[7], OFFSET_Y)) {
+            if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateYTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -66,9 +67,10 @@ export default class Rubik extends Node {
     // Down face has all the cubies with negative Y offset
     rotateD() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[7], -OFFSET_Y)) {
+            if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateYTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -76,9 +78,10 @@ export default class Rubik extends Node {
     // C face has all the cubies with Y offset equal to 0
     rotateC() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[7], 0)) {
+            if (float_equal(c.fictMatrix[7], 0)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateYTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -86,9 +89,10 @@ export default class Rubik extends Node {
     // Front face has all the cubies with negative Z offset
     rotateF() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[11], -OFFSET_Z)) {
+            if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateZTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -96,9 +100,10 @@ export default class Rubik extends Node {
     // Back face has all the cubies with negative Z offset
     rotateB() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[11], OFFSET_Z)) {
+            if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateZTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -106,9 +111,10 @@ export default class Rubik extends Node {
     // H face has all the cubies with Z offset equal to 0
     rotateH() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[11], 0)) {
+            if (float_equal(c.fictMatrix[11], 0)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateZTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -116,9 +122,10 @@ export default class Rubik extends Node {
     // Front face has all the cubies with positive X offset
     rotateR() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[3], OFFSET_X)) {
+            if (float_equal(c.fictMatrix[3], OFFSET_X)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateXTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -126,9 +133,10 @@ export default class Rubik extends Node {
     // Back face has all the cubies with negative X offset
     rotateL() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[3], OFFSET_X)) {
+            if (float_equal(c.fictMatrix[3], OFFSET_X)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateXTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
@@ -136,9 +144,10 @@ export default class Rubik extends Node {
     // H face has all the cubies with X offset equal to 0
     rotateM() {
         this.children.forEach(c => {
-            if (float_equal(c.locaMatrix[3], 0)) {
+            if (float_equal(c.fictMatrix[3], 0)) {
                 // if cubie belongs to up face i need to rotate around Y
                 c.updateXTarget(this.isShift ? -90 : 90);
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
             }
         });
     }
