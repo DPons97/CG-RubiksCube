@@ -17,16 +17,16 @@ async function loadModel(modelName) {
     var pathToModel = baseDir + "/models/"
     var objStr = await utils.get_objstr(pathToModel + modelName);
     var objModel = new OBJ.Mesh(objStr);
-    var modelVertices = objModel.vertices; //Array of vertices
-    var modelNormals = objModel.normals; //Array of normals
-    var modelIndices = objModel.indices; //Array of indices
-    var modelTexCoords = objModel.textures; //Array of uv coordinate
-    return [modelVertices, modelNormals, modelIndices, modelTexCoords]
+    OBJ.initMeshBuffers(gl, mesh); // https://www.npmjs.com/package/webgl-obj-loader/v/2.0.2 find initMeshBuffers and check examples
+
+    return objModel // ritorniamo direttamente l'oggeto
 }
 
 function main() {
 
     var model = loadModel("cube00.obj")
+
+
 
     var dirLightAlpha = -utils.degToRad(-60);
     var dirLightBeta = -utils.degToRad(120);
