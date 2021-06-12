@@ -168,7 +168,7 @@ async function main() {
         var projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
 
         // Compute the camera matrix using look at.
-        var cameraPosition = [10, -10, 0];
+        var cameraPosition = [5, -10, 5];
         var target = [0.0, 0.0, 0.0];
         var up = [0.0, 0.0, 1.0];
         cameraMatrix = utils.LookAt(cameraPosition, target, up);

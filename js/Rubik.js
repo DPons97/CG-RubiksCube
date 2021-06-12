@@ -58,8 +58,8 @@ Rubik.prototype.nextShader = function() {
 // 0001
 // where X,Y,Z are the offset of the cubie with respect to the center of the rubik's cube
 
-// Up face has all the cubies with positive Y offset
-Rubik.prototype.rotateU = function() {
+// Back face has all the cubies with positive Y offset
+Rubik.prototype.rotateB = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -69,8 +69,8 @@ Rubik.prototype.rotateU = function() {
     });
 }
 
-// Down face has all the cubies with negative Y offset
-Rubik.prototype.rotateD = function() {
+// Front face has all the cubies with negative Y offset
+Rubik.prototype.rotateF = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -93,8 +93,8 @@ Rubik.prototype.rotateC = function() {
     });
 }
 
-// Front face has all the cubies with negative Z offset
-Rubik.prototype.rotateF = function() {
+// DOwn face has all the cubies with negative Z offset
+Rubik.prototype.rotateD = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -108,8 +108,8 @@ Rubik.prototype.rotateF = function() {
     });
 }
 
-// Back face has all the cubies with negative Z offset
-Rubik.prototype.rotateB = function() {
+// Up face has all the cubies with negative Z offset
+Rubik.prototype.rotateU = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
@@ -130,7 +130,7 @@ Rubik.prototype.rotateH = function() {
     });
 }
 
-// Front face has all the cubies with positive X offset
+// RIght face has all the cubies with positive X offset
 Rubik.prototype.rotateR = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[3], OFFSET_X)) {
@@ -141,7 +141,7 @@ Rubik.prototype.rotateR = function() {
     });
 }
 
-// Back face has all the cubies with negative X offset
+// Left face has all the cubies with negative X offset
 Rubik.prototype.rotateL = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[3], -OFFSET_X)) {

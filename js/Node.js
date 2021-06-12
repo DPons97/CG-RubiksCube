@@ -132,7 +132,7 @@ class Node {
             var deltaAngle = deltaT * ANIM_ROT_SPEED;
 
             // Update rotations AROUND ORIGIN AXES based on targets. Animation hierarchy: X -> Y -> Z
-            if (Math.abs(this.deltaAngleX) > DELTA) {
+            if (Math.abs(this.deltaAngleX) > 0) {
                 if (this.deltaAngleX < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleX) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleX;
 
@@ -140,7 +140,7 @@ class Node {
                 this.localMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(deltaAngle), this.localMatrix);
 
                 this.deltaAngleX -= deltaAngle;
-            } else if (Math.abs(this.deltaAngleY) > DELTA) {
+            } else if (Math.abs(this.deltaAngleY) > 0) {
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleY) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleY;
 
@@ -148,8 +148,9 @@ class Node {
                 this.localMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(deltaAngle), this.localMatrix);
 
                 this.deltaAngleY -= deltaAngle;
-            } else if (Math.abs(this.deltaAngleZ) > DELTA) {
-                if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
+            } else if (Math.abs(this.deltaAngleZ) > 0) {
+                console.log(this.deltaAngleZ);
+                if (this.deltaAngleZ < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleZ) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleZ;
 
                 // Multiply local matrix for a rotation around Z axis through [0,0,0] (need to change rotation axis wrt local matrix)
