@@ -41,6 +41,8 @@ async function main() {
 
     var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
     var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
+    var uvAttributeLocation = gl.getAttribLocation(program, "inUV");
+    var textLocation = gl.getUniformLocation(program, "inTexture");
     var matrixLocation = gl.getUniformLocation(program, "matrix");
     var materialDiffColorHandle = gl.getUniformLocation(program, 'mDiffColor');
     var lightDirectionHandle = gl.getUniformLocation(program, 'lightDirection');
@@ -57,7 +59,7 @@ async function main() {
                 if (x == 1 && y == 1 && z == 1) { i++ }
                 else {
                     var model = await loadModel("cube" + x + z + ((y == 1) ? '_M' : (y < 1) ? '_B' : '') + '.obj')
-                    cubies[i++] = new Cubie(model, [-x+1,y-1,-z+1]);
+                    cubies[i++] = new Cubie(model, [-x + 1, y - 1, -z + 1]);
                 }
             }
         }
@@ -71,8 +73,8 @@ async function main() {
         var positionBuffer = cubie.drawInfo.vertexBuffer
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.vertices), gl.STATIC_DRAW);
-        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
         var normalBuffer = cubie.drawInfo.normalBuffer;
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
@@ -83,6 +85,34 @@ async function main() {
         var indexBuffer = cubie.drawInfo.indexBuffer;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubie.drawInfo.indices), gl.STATIC_DRAW);
+
+        var uvBuffer = cubie.drawInfo.textureBuffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.textures), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(uvAttributeLocation);
+        gl.vertexAttribPointer(uvAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Create a texture.
+        var texture = gl.createTexture();
+        // use texture unit 0
+        gl.activeTexture(gl.TEXTURE0);
+        // bind to the TEXTURE_2D bind point of texture unit 0
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(textLocation, 0);
+
+        // Asynchronously load an image
+        var image = new Image();
+        image.src = baseDir + "models/Rubiks Cube.png";
+        image.onload = function () {
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+            gl.generateMipmap(gl.TEXTURE_2D);
+        };
 
     })
 
@@ -141,7 +171,7 @@ async function main() {
                 break;
         }
     }
-    
+
     document.onkeyup = function (e) {
         console.log("Key up: " + e.code);
         switch (e.code) {
