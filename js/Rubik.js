@@ -63,8 +63,8 @@ Rubik.prototype.rotateB = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateYTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateYTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -75,8 +75,10 @@ Rubik.prototype.rotateF = function() {
         if (float_equal(c.fictMatrix[7], -OFFSET_Y)) {
             // if cubie belongs to up face i need to rotate around Y
             console.log("before:",c.fictMatrix);
-            c.updateYTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+
+            if (c.updateYTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+
             console.log("after:",c.fictMatrix);
         }
     });
@@ -87,8 +89,8 @@ Rubik.prototype.rotateC = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[7], 0)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateYTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateYTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -98,10 +100,11 @@ Rubik.prototype.rotateD = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], -OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateZTarget(this.isShift ? -90 : 90);
             console.log("before:",c.fictMatrix);
 
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateZTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+
             console.log("after:",c.fictMatrix);
 
         }
@@ -113,8 +116,8 @@ Rubik.prototype.rotateU = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], OFFSET_Z)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateZTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateZTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -124,8 +127,8 @@ Rubik.prototype.rotateH = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[11], 0)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateZTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateZTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateZMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -135,8 +138,8 @@ Rubik.prototype.rotateR = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[3], OFFSET_X)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateXTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateXTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -146,8 +149,8 @@ Rubik.prototype.rotateL = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[3], -OFFSET_X)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateXTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateXTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }
@@ -157,8 +160,8 @@ Rubik.prototype.rotateM = function() {
     this.children.forEach(c => {
         if (float_equal(c.fictMatrix[3], 0)) {
             // if cubie belongs to up face i need to rotate around Y
-            c.updateXTarget(this.isShift ? -90 : 90);
-            c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
+            if (c.updateXTarget(this.isShift ? -90 : 90))
+                c.fictMatrix = utils.multiplyMatrices(utils.MakeRotateXMatrix(this.isShift ? -90 : 90), c.fictMatrix);
         }
     });
 }

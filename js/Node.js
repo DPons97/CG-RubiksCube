@@ -103,22 +103,33 @@ class Node {
      *  Increases the rotation target (same conventions as rotate[XYZ] @see rotateX() ). The node will rotate to the current target within a certain amount of time.
      */
     updateXTarget(delta) {
-        this.deltaAngleX += delta;
-        //console.log(this.deltaAngleX);
+        if (this.deltaAngleX < 180) {
+            this.deltaAngleX += delta;
+            return true;
+        }
+        return false;
     }
 
     /**
      *  Increases the rotation target (same conventions as rotate[XYZ] @see rotateY() ). The node will rotate to the current target within a certain amount of time.
      */
     updateYTarget(delta) {
-        this.deltaAngleY += delta;
+        if (this.deltaAngleY < 180) {
+            this.deltaAngleY += delta;
+            return true;
+        }
+        return false;
     }
 
     /**
      *  Increases the rotation target (same conventions as rotate[XYZ] @see rotateZ() ). The node will rotate to the current target within a certain amount of time.
      */
     updateZTarget(delta) {
-        this.deltaAngleZ += delta;
+        if (this.deltaAngleZ < 180) {
+            this.deltaAngleZ += delta;
+            return true;
+        }
+        return false;
     }
 
     animate(deltaT) {
