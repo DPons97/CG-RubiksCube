@@ -30,6 +30,18 @@ var utils = {
         window.addEventListener('resize', expandFullScreen);
     },
 
+    resizeCanvasToPercentageDisplaySize: function (canvas, percentage) {
+        const expand = () => {
+            canvas.width = window.innerWidth * percentage;
+            canvas.height = window.innerHeight * percentage;
+            console.log(canvas.width + " " + window.innerWidth);
+
+        };
+        expand();
+        // Resize screen when the browser has triggered the resize event
+        window.addEventListener('resize', expand);
+    },
+
     //*** MATH LIBRARY
     degToRad: function (angle) {
         return (angle * Math.PI / 180);

@@ -23,6 +23,7 @@
     <script type="text/javascript" src="js/utils.js"></script>
     <script type="text/javascript" src="js/webgl-obj-loader.min.js"></script>
     <script type="text/javascript" src="js/Node.js"></script>
+    <script type="text/javascript" src="js/gui-utils.js"></script>
     <script type="module" src="js/Cubie.js"></script>
     <script type="module" src="js/Rubik.js"></script>
     <script type="module" src="js/RubiksCube.js"></script>
@@ -30,7 +31,20 @@
 </head>
 
 <body>
-    <canvas id="canvas"> </canvas>
+    <table>
+        <tr>
+            <td>
+                <canvas id="canvas"></canvas>
+            </td>
+            <td>
+                <p><b> Texture </b></p>
+                <div id="slider1"> 0
+                    <input id="texP" type="range" min="0" max="1" step="0.1" value="1"
+                        oninput="onSliderChange(this.value);" />1<br />
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>

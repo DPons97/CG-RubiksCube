@@ -45,6 +45,8 @@ async function main() {
     var uvAttributeLocation = gl.getAttribLocation(programs[0], "inUV");
     var textLocation = gl.getUniformLocation(programs[0], "inTexture");
     var matrixLocation = gl.getUniformLocation(programs[0], "matrix");
+    var texturePercentage = gl.getUniformLocation(programs[0], 'texturePercentage');
+    var ambientColor = gl.getUniformLocation(programs[0], 'ambientColor');
     var materialDiffColorHandle = gl.getUniformLocation(programs[0], 'mDiffColor');
     var lightDirectionHandle = gl.getUniformLocation(programs[0], 'lightDirection');
     var lightColorHandle = gl.getUniformLocation(programs[0], 'lightColor');
@@ -69,7 +71,7 @@ async function main() {
             }
         }
     }
-    console.log(cubies);
+
     cubies.forEach((cubie) => {
         var vao = gl.createVertexArray();
         gl.bindVertexArray(vao);
@@ -233,6 +235,8 @@ async function main() {
             gl.uniform3fv(materialDiffColorHandle, [1.0, 0.0, 0.0]);
             gl.uniform3fv(lightColorHandle, directionalLightColor);
             gl.uniform3fv(lightDirectionHandle, directionalLight);
+            gl.uniform1f(texturePercentage, texP);
+            gl.uniform3fv(ambientColor, [0.0, 0.0, 0.0]);
 
             gl.bindVertexArray(cubie.vao);
             gl.drawElements(gl.TRIANGLES, cubie.drawInfo.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -257,10 +261,10 @@ async function init() {
         return;
     }
 
-    utils.resizeCanvasToDisplaySize(gl.canvas);
+    utils.resizeCanvasToPercentageDisplaySize(gl.canvas, 0.8);
 
     // #0 - Ambient color white
-    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
+    await utils.loadFiles([shaderDir + 'vs0.glsl', shaderDir + 'fs0.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         programs[0] = utils.createProgram(gl, vertexShader, fragmentShader);
@@ -273,5 +277,6 @@ async function init() {
 
     main();
 }
+
 
 window.onload = init;
