@@ -1,6 +1,6 @@
-const ANIM_ROT_SPEED = 360;       // Degrees/s        // TODO tweak
+var ANIM_ROT_SPEED = 360;       // Degrees/s        // TODO tweak
 const DELTA = 0.0001            // Delta for floating point comparison      // TODO move to utils
-
+var isAnimating;
 /**
  *  Default class for a Scene Graph NODE
  */
@@ -144,6 +144,7 @@ class Node {
 
             // Update rotations AROUND ORIGIN AXES based on targets. Animation hierarchy: X -> Y -> Z
             if (Math.abs(this.deltaAngleX) > 0) {
+                isAnimating = true;
                 if (this.deltaAngleX < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleX) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleX;
 
@@ -152,6 +153,7 @@ class Node {
 
                 this.deltaAngleX -= deltaAngle;
             } else if (Math.abs(this.deltaAngleY) > 0) {
+                isAnimating = true;
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleY) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleY;
 
@@ -160,7 +162,7 @@ class Node {
 
                 this.deltaAngleY -= deltaAngle;
             } else if (Math.abs(this.deltaAngleZ) > 0) {
-                console.log(this.deltaAngleZ);
+                isAnimating = true;
                 if (this.deltaAngleZ < 0) deltaAngle = -deltaAngle;
                 if (Math.abs(this.deltaAngleZ) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleZ;
 

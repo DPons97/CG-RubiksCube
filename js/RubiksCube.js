@@ -133,34 +133,34 @@ async function main() {
         switch (e.code) {
             case "ShiftLeft":
             case "ShiftRight":
-                rubik.isShift = true;
+                if (!rubik.isShift) rubik.isShift = true;
                 break;
             case "KeyU": // U for up face
-                rubik.rotateU();
+                rubik.pushRotation("U");
                 break;
             case "KeyD": // D for down face
-                rubik.rotateD();
+                rubik.pushRotation("D");
                 break;
             case "KeyC": // C for central face parallel to U and D
-                rubik.rotateC();
+                rubik.pushRotation("C");
                 break;
             case "KeyF": // F for front face
-                rubik.rotateF();
+                rubik.pushRotation("F");   
                 break;
             case "KeyB": // B for back face
-                rubik.rotateB();
+                rubik.pushRotation("B");
                 break;
             case "KeyH": // H for central face parallel to F and B
-                rubik.rotateH();
+                rubik.pushRotation("H");               
                 break;
             case "KeyR": // R for right face
-                rubik.rotateR();
+                rubik.pushRotation("R");
                 break;
             case "KeyL": // L for left face
-                rubik.rotateL();
+                rubik.pushRotation("L");
                 break;
             case "KeyM": // M for central face parallel to R and L
-                rubik.rotateM();
+                rubik.pushRotation("M");
                 break;
             case "ArrowDown": // Arrows to rotate whole cube
                 rubik.rotateCubeX(true)
@@ -176,6 +176,10 @@ async function main() {
                 break;
             case "Space":
                 rubik.nextProgram();
+            case "KeyS":
+                if (rubik.isShift) rubik.unShuffle();
+                else rubik.shuffle();
+                break;
             default:
                 break;
         }
@@ -215,7 +219,10 @@ async function main() {
 
         var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
 
+        isAnimating = false;
         rubik.animate();
+        if (!isAnimating) rubik.checkQueue();
+
         rubik.updateWorldMatrix();
         gl.useProgram(rubik.getProgram());
 
