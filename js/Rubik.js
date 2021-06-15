@@ -24,11 +24,11 @@ function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
 // The order in which cubies are passed SHOULD not matter.
 export default class Rubik extends Node {
 
-    constructor(cubies, shaders) {
+    constructor(cubies, programs) {
         super()
         console.log(cubies);
-        this.shaders = shaders;
-        this.currShader = 0;
+        this.programs = programs;
+        this.curProgram = 0;
         this.isShift = false;
         cubies.forEach(cubie => {
             cubie.setParent(this);
@@ -44,10 +44,13 @@ Rubik.prototype.initKeyBinds = function() {
 }
 
 // changes the shader in a round robin fashion
-Rubik.prototype.nextShader = function() {
-    this.currShader++;
-    if (this.currShader >= this.shaders.length) this.currShader = 0;
-    this.children.forEach(c => { c.setShader(this.shaders[this.currShader]) })
+Rubik.prototype.nextProgram = function() {
+    this.curProgram++;
+    if (this.curProgram >= this.programs.length) this.curProgram = 0;
+}
+
+Rubik.prototype.getProgram = function(){
+    return this.programs[this.curProgram];
 }
 
 // Checking cubies that belong to a specific face:

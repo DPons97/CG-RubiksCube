@@ -1,4 +1,4 @@
-var program;
+var programs = [];
 var gl;
 var shaderDir;
 var baseDir;
@@ -39,15 +39,20 @@ async function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
 
-    var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
-    var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
-    var uvAttributeLocation = gl.getAttribLocation(program, "inUV");
-    var textLocation = gl.getUniformLocation(program, "inTexture");
-    var matrixLocation = gl.getUniformLocation(program, "matrix");
-    var materialDiffColorHandle = gl.getUniformLocation(program, 'mDiffColor');
-    var lightDirectionHandle = gl.getUniformLocation(program, 'lightDirection');
-    var lightColorHandle = gl.getUniformLocation(program, 'lightColor');
-    var normalMatrixPositionHandle = gl.getUniformLocation(program, 'nMatrix');
+    // #0 - Ambient color white
+    var positionAttributeLocation = gl.getAttribLocation(programs[0], "inPosition");
+    var normalAttributeLocation = gl.getAttribLocation(programs[0], "inNormal");
+    var uvAttributeLocation = gl.getAttribLocation(programs[0], "inUV");
+    var textLocation = gl.getUniformLocation(programs[0], "inTexture");
+    var matrixLocation = gl.getUniformLocation(programs[0], "matrix");
+    var materialDiffColorHandle = gl.getUniformLocation(programs[0], 'mDiffColor');
+    var lightDirectionHandle = gl.getUniformLocation(programs[0], 'lightDirection');
+    var lightColorHandle = gl.getUniformLocation(programs[0], 'lightColor');
+    var normalMatrixPositionHandle = gl.getUniformLocation(programs[0], 'nMatrix');
+
+    // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
+    // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
+    // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
 
     // SET UP THE CUBIES AND RUBIK OBJECTS
     var cubies = [];
@@ -116,7 +121,7 @@ async function main() {
 
     })
 
-    rubik = new Rubik(cubies, [program])
+    rubik = new Rubik(cubies, programs)
     rubik.initKeyBinds();
 
     console.log(rubik.children);
@@ -167,6 +172,8 @@ async function main() {
             case "ArrowLeft": // Arrows to rotate whole cube
                 rubik.rotateCubeY(false)
                 break;
+            case "Space":
+                rubik.nextProgram();
             default:
                 break;
         }
@@ -208,11 +215,11 @@ async function main() {
 
         rubik.animate();
         rubik.updateWorldMatrix();
+        gl.useProgram(rubik.getProgram());
 
         // Compute all the matrices for rendering
         rubik.children.forEach(function (cubie) {
             //console.log(cubie);
-            gl.useProgram(program);
 
             var projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, cubie.worldMatrix);
             var normalMatrix = utils.invertMatrix(utils.transposeMatrix(cubie.worldMatrix));
@@ -252,13 +259,17 @@ async function init() {
 
     utils.resizeCanvasToDisplaySize(gl.canvas);
 
+    // #0 - Ambient color white
     await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-        program = utils.createProgram(gl, vertexShader, fragmentShader);
+        programs[0] = utils.createProgram(gl, vertexShader, fragmentShader);
 
     });
-    gl.useProgram(program);
+
+    // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
+    // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
+    // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
 
     main();
 }
