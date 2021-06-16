@@ -26,7 +26,7 @@ out vec4 SHDeltaLzColor;		// For spherical harmonics, DeltaLz color
 
 
 void main() {
-  fsNormal = mat3(nMatrix)*inNormal;
+    fsNormal = mat3(nMatrix)*inNormal;
 	fsPosition = (pMatrix * vec4(inPosition, 1.0)).xyz;
 	fsUV = vec2(inUV.x, 1.0-inUV.y);
 	

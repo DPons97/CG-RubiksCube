@@ -564,4 +564,11 @@ var utils = {
         return text;
     },
 
+    //**** CUSTOM UTILS
+    // Function to convert a theta,phi angles tuple to a vector
+    anglesToDir: function(theta, phi) {
+        var t = utils.degToRad(theta);
+        var p = utils.degToRad(phi);
+        return [Math.sin(t)*Math.sin(p), Math.cos(t), Math.sin(t)*Math.cos(p)];
+    }
 }
