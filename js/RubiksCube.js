@@ -151,8 +151,6 @@ async function main() {
     drawScene();
 
     function drawScene() {
-        // TODO animate() all root elements in scene (in this case, only rubik)
-
         // RESET THE SCENE
         gl.clearColor(0.85, 0.85, 0.85, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -172,6 +170,9 @@ async function main() {
 
         isAnimating = false;
         rubik.animate();
+
+        shaders_utils.currShaderParams.DTexMix = document.getElementById("texP").value;
+
         if (!isAnimating) rubik.checkQueue();
 
         rubik.updateWorldMatrix();

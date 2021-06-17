@@ -7,8 +7,8 @@ var shaders_utils = {
 
     // changes the shader in a round robin fashion
     nextProgram: function(gl, cubies) {
-        curProgram++;
-        if (this.curProgram >= this.programs.length) curProgram = 0;
+        this.curProgram++;
+        if (this.curProgram >= this.programs.length) this.curProgram = 0;
 
         // Update program attribute locations
         this.setProgramAttribLocations(gl, this.getProgram());
@@ -24,7 +24,7 @@ var shaders_utils = {
         positionAttribute: null,
         normalAttribute: null,
         uvAttribute: null,
-        textLocation: null,             // FIX
+        textLocation: null,
         matrixLocation: null,
         vertexMatrixPositionHandle: null,
         normalMatrixPositionHandle: null,
@@ -123,55 +123,55 @@ var shaders_utils = {
     },
 
     defShaderParams: {
-        ambientLightColor: [0.0, 0.0, 0.0],
-        diffuseColor:  [0.0, 0.0, 0.0],
-        specularColor:  [0.0, 0.0, 0.0],
-        ambientLightLowColor:  [0.0, 0.0, 0.0],
-        SHLeftLightColor:  [0.0, 0.0, 0.0],
-        SHRightLightColor:  [0.0, 0.0, 0.0],
-        ambientMatColor:  [0.0, 0.0, 0.0],
-        emitColor:  [0.0, 0.0, 0.0],
+        ambientLightColor: [1.0, 1.0, 1.0],
+        diffuseColor:  [1.0, 1.0, 1.0],
+        specularColor:  [1.0, 1.0, 1.0],
+        ambientLightLowColor:  [1.0, 1.0, 1.0],
+        SHLeftLightColor:  [1.0, 1.0, 1.0],
+        SHRightLightColor:  [1.0, 1.0, 1.0],
+        ambientMatColor:  [1.0, 1.0, 1.0],
+        emitColor:  [1.0, 1.0, 1.0],
     
-        lightColor:  [0.0, 0.0, 0.0],
+        lightColor:  [1.0, 1.0, 1.0],
         Pos: [0, 0, 0],
         DirTheta: 60,
         DirPhi: 45,
-        ConeOut: 30,
-        ConeIn: 80,
+        ConeOut: 3,
+        ConeIn: 0.8,
         Decay: 0,
         Target: 61,
     
         ADirTheta: 0,
         ADirPhi: 0,
-        DTexMix: 100,
-        SpecShine: 100,
+        DTexMix: 1,
+        SpecShine: 1,
         DToonTh: 50,
         SToonTh: 90,
     },
 
     currShaderParams: {
-        ambientLightColor: [0.0, 0.0, 0.0],
-        diffuseColor:  [0.0, 0.0, 0.0],
-        specularColor:  [0.0, 0.0, 0.0],
-        ambientLightLowColor:  [0.0, 0.0, 0.0],
-        SHLeftLightColor:  [0.0, 0.0, 0.0],
-        SHRightLightColor:  [0.0, 0.0, 0.0],
-        ambientMatColor:  [0.0, 0.0, 0.0],
-        emitColor:  [0.0, 0.0, 0.0],
+        ambientLightColor: [1.0, 1.0, 1.0],
+        diffuseColor:  [1.0, 1.0, 1.0],
+        specularColor:  [1.0, 1.0, 1.0],
+        ambientLightLowColor:  [1.0, 1.0, 1.0],
+        SHLeftLightColor:  [1.0, 1.0, 1.0],
+        SHRightLightColor:  [1.0, 1.0, 1.0],
+        ambientMatColor:  [1.0, 1.0, 1.0],
+        emitColor:  [1.0, 1.0, 1.0],
     
-        lightColor:  [0.0, 0.0, 0.0],
+        lightColor:  [1.0, 1.0, 1.0],
         Pos: [0, 0, 0],                 // Position of light
         DirTheta: 60,
         DirPhi: 45,
-        ConeOut: 30,
-        ConeIn: 80,
+        ConeOut: 3,
+        ConeIn: 0.8,
         Decay: 0,
         Target: 61,
     
         ADirTheta: 0,
         ADirPhi: 0,
-        DTexMix: 100,
-        SpecShine: 100,
+        DTexMix: 1,
+        SpecShine: 1,
         DToonTh: 50,
         SToonTh: 90,
     },
@@ -181,8 +181,7 @@ var shaders_utils = {
         switch (this.curProgram){
             case 0:
                 // #0 - Ambient color white - Default program
-                this.currShaderParams.ambientLightColor = [0.0, 0.0, 0.0];
-                this.currShaderParams.DTexMix = texP;
+                this.currShaderParams.ambientLightColor = [1.0, 1.0, 1.0];
                 break;
             case 1:
                 // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
@@ -209,10 +208,10 @@ var shaders_utils = {
         gl.uniformMatrix4fv(this.programAttribLocations.normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalMatrix));
         gl.uniformMatrix4fv(this.programAttribLocations.vertexMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(cubie.worldMatrix));
 
-        gl.uniform4fv(this.programAttribLocations.ambientLightColor, [this.currShaderParams.ambientLightColor, 1]);
-        gl.uniform4fv(this.programAttribLocations.ambientLightLowColor, [this.currShaderParams.ambientLightLowColor, 1]);
-        gl.uniform4fv(this.programAttribLocations.SHLeftLightColor, [this.currShaderParams.SHLeftLightColor, 1]);
-        gl.uniform4fv(this.programAttribLocations.SHRightLightColor, [this.currShaderParams.SHLeftLightColor, 1]);
+        gl.uniform4fv(this.programAttribLocations.ambientLightColor, this.currShaderParams.ambientLightColor.concat(1.0));
+        gl.uniform4fv(this.programAttribLocations.ambientLightLowColor, this.currShaderParams.ambientLightLowColor.concat(1.0));
+        gl.uniform4fv(this.programAttribLocations.SHLeftLightColor, this.currShaderParams.SHLeftLightColor.concat(1.0));
+        gl.uniform4fv(this.programAttribLocations.SHRightLightColor, this.currShaderParams.SHLeftLightColor.concat(1.0));
 
         // Fragment shader
         gl.uniform3fv(this.programAttribLocations.eyePos, cameraPosition);
@@ -224,16 +223,16 @@ var shaders_utils = {
         gl.uniform1f(this.programAttribLocations.ConeOut, this.currShaderParams.ConeOut);
         gl.uniform1f(this.programAttribLocations.Decay, this.currShaderParams.Decay);
         gl.uniform1f(this.programAttribLocations.Target, this.currShaderParams.Target);
-        gl.uniform4fv(this.programAttribLocations.lightColor, [this.currShaderParams.lightColor, 1]);
+        gl.uniform4fv(this.programAttribLocations.lightColor, this.currShaderParams.lightColor.concat(1.0));
         gl.uniform3fv(this.programAttribLocations.Dir, utils.anglesToDir(this.currShaderParams.ADirTheta, this.currShaderParams.ADirPhi));
-        gl.uniform4fv(this.programAttribLocations.diffuseColor, [this.currShaderParams.diffuseColor, 1]);
+        gl.uniform4fv(this.programAttribLocations.diffuseColor, this.currShaderParams.diffuseColor.concat(1.0));
         gl.uniform1f(this.programAttribLocations.DTexMix, this.currShaderParams.DTexMix);
-        gl.uniform4fv(this.programAttribLocations.specularColor, [this.currShaderParams.specularColor, 1]);
+        gl.uniform4fv(this.programAttribLocations.specularColor, this.currShaderParams.specularColor.concat(1.0));
         gl.uniform1f(this.programAttribLocations.SpecShine, this.currShaderParams.SpecShine);
         gl.uniform1f(this.programAttribLocations.DToonTh, this.currShaderParams.DToonTh);
         gl.uniform1f(this.programAttribLocations.SToonTh, this.currShaderParams.SToonTh);
-        gl.uniform4fv(this.programAttribLocations.ambientMatColor, [this.currShaderParams.ambientMatColor, 1]);
-        gl.uniform4fv(this.programAttribLocations.emitColor, [this.currShaderParams.emitColor, 1]);
+        gl.uniform4fv(this.programAttribLocations.ambientMatColor, this.currShaderParams.ambientMatColor.concat(1.0));
+        gl.uniform4fv(this.programAttribLocations.emitColor, this.currShaderParams.emitColor.concat(1.0));
 
         // Texture
         gl.activeTexture(gl.TEXTURE0);

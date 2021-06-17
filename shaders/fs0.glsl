@@ -66,7 +66,7 @@ void main() {
     // --------- START Code for lights composition ---------
 
     // Ambient
-    ambientLight = ambientLightColor*(1.-DTexMix)+DTexMix*texcol;
+    ambientLight = ambientLightColor;
 
     // --------- END LIGHT COMPOSITION ---------
 
@@ -75,7 +75,7 @@ void main() {
     
     // --------- START Code for BRDF ---------    
     
-    out_color = clamp(ambientLight,0.,1.);
+    out_color = clamp(ambientLight * ambColor, 0.0, 1.0);
 
     // --------- END BRDF ---------
 

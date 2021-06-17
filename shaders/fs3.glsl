@@ -65,7 +65,16 @@ void main() {
 
     // --------- START Code for lights composition ---------
 
+    // Spot light
+    lightDirA = normalize(Pos - fsPosition);
 
+	float cout = cos(radians(ConeOut/2.0));
+	float cin = cos(radians((ConeOut*ConeIn)/2.0));
+	float cosAlpha = dot(lightDirA, Dir);
+	lightColorA = lightColor * clamp((cosAlpha - cout)/(cin - cout), 0.0, 1.0);
+
+	// Spherical harmonics ambient
+    ambientLight = SHconstColor + normalVec.x * SHDeltaLxColor + normalVec.y * SHDeltaLyColor + normalVec.z * SHDeltaLzColor;
 
     // --------- END LIGHT COMPOSITION ---------
 
@@ -74,7 +83,9 @@ void main() {
     
     // --------- START Code for BRDF ---------
 
-
+    // Lambert diffuse
+    vec4 LAcontr = clamp(dot(lightDirA, normalVec),0.0,1.0) * lightColorA;
+    out_color = clamp(diffColor * LAcontr, 0.0, 1.0);       //  + ambientLight * ambColor
 
     // --------- END BRDF ---------
 
