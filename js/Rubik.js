@@ -46,16 +46,6 @@ Rubik.prototype.initKeyBinds = function() {
         document.onkeyup = this.processKeyUp;
 }
 
-// // changes the shader in a round robin fashion
-// Rubik.prototype.nextProgram = function() {
-//     this.curProgram++;
-//     if (this.curProgram >= this.programs.length) this.curProgram = 0;
-// }
-
-// Rubik.prototype.getProgram = function(){
-//     return this.programs[this.curProgram];
-// }
-
 Rubik.prototype.pushRotation = function(move){
     if (this.queue.length> MAX_QUEUED_MOVES) return;
     if (!this.isShift) this.queue.push([move,1]);

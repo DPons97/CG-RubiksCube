@@ -166,12 +166,12 @@ var shaders_utils = {
         ConeOut: 3,
         ConeIn: 0.8,
         Decay: 0,
-        Target: 61,
+        Target: 60,
     
         ADirTheta: 0,
         ADirPhi: 0,
         DTexMix: 1,
-        SpecShine: 1,
+        SpecShine: 0.5,
         DToonTh: 50,
         SToonTh: 90,
     },
@@ -189,13 +189,34 @@ var shaders_utils = {
                 break;
             case 2:
                 // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
-
+                
                 break;
             case 3:
                 // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
+                this.currShaderParams.ambientLightLowColor = [.5, .5, .5];
+                this.currShaderParams.SHLeftLightColor = [.7, 0.0, .7];
+                this.currShaderParams.SHRightLightColor = [0.0, .7, .7];
+                this.currShaderParams.ambientLightColor = [.33, 0.0, 0.0];
 
+                this.currShaderParams.lightColor = [1, 1, 1];
+
+                this.currShaderParams.Pos = [
+                    5.3,
+                    -7.73,
+                    -3.83
+                ];
+
+                this.currShaderParams.DirTheta = 120;
+                this.currShaderParams.DirPhi = 129;
+                
+                this.currShaderParams.ConeOut = 43.8;
+                this.currShaderParams.ConeIn = 0.37;
+
+                this.currShaderParams.SpecShine = 1.0;
+                this.currShaderParams.specularColor = [0.8, 0.5, 1.0]
                 break;
         }
+        this.initHtmlShaderParameters();
     },
 
     // Apply current shader parameters to current program
@@ -224,7 +245,7 @@ var shaders_utils = {
         gl.uniform1f(this.programAttribLocations.Decay, this.currShaderParams.Decay);
         gl.uniform1f(this.programAttribLocations.Target, this.currShaderParams.Target);
         gl.uniform4fv(this.programAttribLocations.lightColor, this.currShaderParams.lightColor.concat(1.0));
-        gl.uniform3fv(this.programAttribLocations.Dir, utils.anglesToDir(this.currShaderParams.ADirTheta, this.currShaderParams.ADirPhi));
+        gl.uniform3fv(this.programAttribLocations.ADir, utils.anglesToDir(this.currShaderParams.ADirTheta, this.currShaderParams.ADirPhi));
         gl.uniform4fv(this.programAttribLocations.diffuseColor, this.currShaderParams.diffuseColor.concat(1.0));
         gl.uniform1f(this.programAttribLocations.DTexMix, this.currShaderParams.DTexMix);
         gl.uniform4fv(this.programAttribLocations.specularColor, this.currShaderParams.specularColor.concat(1.0));
@@ -238,5 +259,20 @@ var shaders_utils = {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.uniform1i(this.programAttribLocations.textLocation, 0);
+    },
+
+    // Initialize shader parameters in html page
+    initHtmlShaderParameters: function() {
+        document.getElementById("texP").value = this.currShaderParams.DTexMix;
+        
+        document.getElementById("posX").value = this.currShaderParams.Pos[0];
+        document.getElementById("posY").value = this.currShaderParams.Pos[1];
+        document.getElementById("posZ").value = this.currShaderParams.Pos[2];
+
+        document.getElementById("dirT").value = this.currShaderParams.DirPhi;
+        document.getElementById("dirP").value = this.currShaderParams.DirTheta;
+        
+        document.getElementById("coneIn").value = this.currShaderParams.ConeIn;
+        document.getElementById("coneOut").value = this.currShaderParams.ConeOut;
     }
 }

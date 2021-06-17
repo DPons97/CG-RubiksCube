@@ -127,6 +127,7 @@ async function main() {
                 break;
             case "Space":
                 shaders_utils.nextProgram(gl, cubies);
+                break;
             case "KeyS":
                 if (rubik.isShift) rubik.unShuffle();
                 else rubik.shuffle();
@@ -171,7 +172,7 @@ async function main() {
         isAnimating = false;
         rubik.animate();
 
-        shaders_utils.currShaderParams.DTexMix = document.getElementById("texP").value;
+        updateShaderParams();
 
         if (!isAnimating) rubik.checkQueue();
 
@@ -189,6 +190,21 @@ async function main() {
         });
 
         window.requestAnimationFrame(drawScene);
+    }
+
+    function updateShaderParams() {
+        shaders_utils.currShaderParams.DTexMix = document.getElementById("texP").value;
+        shaders_utils.currShaderParams.Pos = [
+            document.getElementById("posX").value,
+            document.getElementById("posY").value,
+            document.getElementById("posZ").value
+        ];
+
+        shaders_utils.currShaderParams.DirPhi = document.getElementById("dirT").value;
+        shaders_utils.currShaderParams.DirTheta = document.getElementById("dirP").value;
+        
+        shaders_utils.currShaderParams.ConeIn = document.getElementById("coneIn").value;
+        shaders_utils.currShaderParams.ConeOut = document.getElementById("coneOut").value;
     }
 }
 
@@ -220,12 +236,11 @@ async function init() {
     // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
     
     // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
-    /*await utils.loadFiles([shaderDir + 'vs3.glsl', shaderDir + 'fs3.glsl'], function (shaderText) {
+    await utils.loadFiles([shaderDir + 'vs3.glsl', shaderDir + 'fs3.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-        // todo shaders_utils.programs[3] = utils.createProgram(gl, vertexShader, fragmentShader);
-        shaders_utils.programs[0] = utils.createProgram(gl, vertexShader, fragmentShader);
-    });*/
+        shaders_utils.programs[3] = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
 
     main();
 }

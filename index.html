@@ -38,14 +38,67 @@
                 <canvas id="canvas"></canvas>
             </td>
             <td>
-                <p><b> Texture </b></p>
+                <p><b> Texture [0-100%]: <span id="texResult"></span> </b></p>
                 <div id="slider1"> 0
-                    <input id="texP" type="range" min="0" max="1" step="0.1" value="1"
-                        oninput="onSliderChange(this.value);" />1<br />
+                    <input id="texP" type="range" min="0" max="1" step="0.01" value="1"
+                        oninput="updateValues();" />1<br />
                 </div>
+                <p><b> PosX [-20 ; +20]: <span id="posXRes"></span> </b></p>
+                <div id="slider2"> -20
+                    <input id="posX" type="range" min="-20" max="20" step="0.01" value="0"
+                        oninput="updateValues();" />20<br />
+                </div>
+                <p><b> PosY [-20 ; +20]: <span id="posYRes"></span> </b></p>
+                <div id="slider2"> -20
+                    <input id="posY" type="range" min="-20" max="20" step="0.01" value="0"
+                        oninput="updateValues();" />20<br />
+                </div>
+                <p><b> PosZ [-20 ; +20]: <span id="posZRes"></span> </b></p>
+                <div id="slider2"> -20
+                    <input id="posZ" type="range" min="-20" max="20" step="0.01" value="0"
+                        oninput="updateValues();" />20<br />
+                </div>
+
+                <p><b> Dirθ [0-180°]: <span id="dirTRes"></span> </b></p>
+                <div id="slider2"> 0
+                    <input id="dirT" type="range" min="0" max="180" step="0.1" value="0"
+                        oninput="updateValues();" />180<br />
+                </div>
+                <p><b> Dirφ [0-180°]: <span id="dirPRes"></span> </b></p>
+                <div id="slider2"> 0
+                    <input id="dirP" type="range" min="0" max="180" step="0.1" value="0"
+                        oninput="updateValues();" />180<br />
+                </div>
+
+                <p><b> Cone Out [0-150]: <span id="coneOutRes"></span> </b></p>
+                <div id="slider2"> 0
+                    <input id="coneOut" type="range" min="0" max="150" step="0.1" value="75"
+                        oninput="updateValues();" />150<br />
+                </div>
+                <p><b> Cone In [0-100%]: <span id="coneInRes"></span> </b></p>
+                <div id="slider2"> 0
+                    <input id="coneIn" type="range" min="0" max="1" step="0.01" value=".5"
+                        oninput="updateValues();" />1<br />
+                </div>
+            
             </td>
         </tr>
     </table>
+
+    <script>
+        function updateValues() {
+            document.getElementById("texResult").innerHTML = document.getElementById("texP").value;
+
+            document.getElementById("posXRes").innerHTML = document.getElementById("posX").value;
+            document.getElementById("posYRes").innerHTML = document.getElementById("posY").value;
+            document.getElementById("posZRes").innerHTML = document.getElementById("posZ").value;
+
+            document.getElementById("dirTRes").innerHTML = document.getElementById("dirT").value;
+            document.getElementById("dirPRes").innerHTML = document.getElementById("dirP").value;
+            document.getElementById("coneOutRes").innerHTML = document.getElementById("coneOut").value;
+            document.getElementById("coneInRes").innerHTML = document.getElementById("coneIn").value;
+        }
+    </script>
 </body>
 
 </html>
