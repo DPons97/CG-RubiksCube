@@ -1,6 +1,9 @@
 var ANIM_ROT_SPEED = 360;       // Degrees/s        // TODO tweak
 const DELTA = 0.0001            // Delta for floating point comparison      // TODO move to utils
 var isAnimating;
+
+var q = new Quaternion();
+
 /**
  *  Default class for a Scene Graph NODE
  */
@@ -64,39 +67,40 @@ class Node {
      *  Rotates this node [delta] degrees clockwise (use negative delta to rotate counterclockwise) around origin X axis
      */
     rotateX(delta) {
+        var scalar = Math.cos(utils.degToRad(delta));
+        var vect_x = Math.sin(utils.degToRad(delta));
+        var dq = new Quaternion(scalar, vect_x ,0, 0);
+        q = dq.mul(q);
+        var rotationMatrix = q.toMatrix4();
+        console.log(rotationMatrix);
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
-        this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
-            utils.invertMatrix(inverseTrans),
-            utils.MakeRotateXMatrix(delta)),
-            inverseTrans),
-            this.localMatrix
-        );
+        var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
+        this.localMatrix = rotationMatrix;    
     }
 
     /**
      *  Rotates this node [delta] degrees clockwise (use negative delta to rotate counterclockwise) around origin Y axis
      */
     rotateY(delta) {
-        var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
-        this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
-            utils.invertMatrix(inverseTrans),
-            utils.MakeRotateYMatrix(delta)),
-            inverseTrans),
-            this.localMatrix
-        );
+        var scalar = Math.cos(utils.degToRad(delta));
+        var vect_y = Math.sin(utils.degToRad(delta));
+        var dq = new Quaternion(scalar, 0, vect_y, 0);
+        q = dq.mul(q);
+        var rotationMatrix = q.toMatrix4();
+        console.log(rotationMatrix);
+        this.localMatrix = rotationMatrix;    
     }
 
     /**
      *  Rotates this node [delta] degrees clockwise (use negative delta to rotate counterclockwise) around origin Z axis
      */
     rotateZ(delta) {
-        var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
-        this.localMatrix = utils.multiplyMatrices(utils.multiplyMatrices(utils.multiplyMatrices(
-            utils.invertMatrix(inverseTrans),
-            utils.MakeRotateZMatrix(delta)),
-            inverseTrans),
-            this.localMatrix
-        );
+        var scalar = Math.cos(utils.degToRad(delta));
+        var vect_z = Math.sin(utils.degToRad(delta));
+        var dq = new Quaternion(scalar, 0, 0, vect_z);
+        q = dq.mul(q);
+        var rotationMatrix = q.toMatrix4();
+        this.localMatrix = rotationMatrix;
     }
 
     /**

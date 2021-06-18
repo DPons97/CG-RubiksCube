@@ -8,7 +8,7 @@ const MOVES = ["R","L", "U", "D", "F", "B", "H", "C", "M"];
 
 const DELTA = 0.0001 // Delta for floating point comparison     // TODO move to utils
 
-const RUBIK_ROT_SPEED = 10; // stores the rotation speed of the whole cube
+const RUBIK_ROT_SPEED = 2; // stores the rotation speed of the whole cube
 
 function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
     if (Math.abs(a - b) <= DELTA) {
