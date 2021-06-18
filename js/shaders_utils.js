@@ -189,7 +189,25 @@ var shaders_utils = {
                 break;
             case 2:
                 // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
+                this.currShaderParams.ambientLightLowColor = [.5, .8, .7];
+                this.currShaderParams.ambientLightColor = [.8, 0.7, 0.5];
+
+                this.currShaderParams.lightColor = [0.3, 0.1, 0.4];
+
+                this.currShaderParams.Pos = [
+                    15,
+                    0,
+                    0
+                ];
+
+                this.currShaderParams.DirTheta = 90;
+                this.currShaderParams.DirPhi = 90;
                 
+                this.currShaderParams.ConeOut = 40;
+                this.currShaderParams.ConeIn = 0.4;
+
+                this.currShaderParams.SpecShine = 1.0;
+                this.currShaderParams.specularColor = [0.8, 0.5, 1.0]
                 break;
             case 3:
                 // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)

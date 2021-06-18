@@ -234,7 +234,11 @@ async function init() {
     // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
     
     // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
-    
+    await utils.loadFiles([shaderDir + 'vs2.glsl', shaderDir + 'fs2.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+        shaders_utils.programs[2] = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
     // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
     await utils.loadFiles([shaderDir + 'vs3.glsl', shaderDir + 'fs3.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
