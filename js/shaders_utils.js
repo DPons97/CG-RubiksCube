@@ -122,33 +122,6 @@ var shaders_utils = {
         })
     },
 
-    defShaderParams: {
-        ambientLightColor: [1.0, 1.0, 1.0],
-        diffuseColor:  [1.0, 1.0, 1.0],
-        specularColor:  [1.0, 1.0, 1.0],
-        ambientLightLowColor:  [1.0, 1.0, 1.0],
-        SHLeftLightColor:  [1.0, 1.0, 1.0],
-        SHRightLightColor:  [1.0, 1.0, 1.0],
-        ambientMatColor:  [1.0, 1.0, 1.0],
-        emitColor:  [1.0, 1.0, 1.0],
-    
-        lightColor:  [1.0, 1.0, 1.0],
-        Pos: [0, 0, 0],
-        DirTheta: 60,
-        DirPhi: 45,
-        ConeOut: 3,
-        ConeIn: 0.8,
-        Decay: 0,
-        Target: 61,
-    
-        ADirTheta: 0,
-        ADirPhi: 0,
-        DTexMix: 1,
-        SpecShine: 1,
-        DToonTh: 50,
-        SToonTh: 90,
-    },
-
     currShaderParams: {
         ambientLightColor: [1.0, 1.0, 1.0],
         diffuseColor:  [1.0, 1.0, 1.0],
