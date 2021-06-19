@@ -172,6 +172,7 @@ async function main() {
         isAnimating = false;
         rubik.animate();
 
+        shaders_utils.animateShaderParams();
         updateShaderParams();
 
         if (!isAnimating) rubik.checkQueue();
@@ -239,11 +240,20 @@ async function init() {
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         shaders_utils.programs[2] = utils.createProgram(gl, vertexShader, fragmentShader);
     });
-    // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
+
+    // #3 - Spot light, Spherical Harm., Lambert, Phong specular
     await utils.loadFiles([shaderDir + 'vs3.glsl', shaderDir + 'fs3.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         shaders_utils.programs[3] = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
+
+    // #4 - Direct light, animated Spherical Harm., animated Toon diffuse, animated Toon (Phong)
+    await utils.loadFiles([shaderDir + 'vs4.glsl', shaderDir + 'fs4.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+        //shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
+        shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
     main();

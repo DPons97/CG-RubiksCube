@@ -1,9 +1,9 @@
 var shaders_utils = {
     programs: [],
-    curProgram: 0,
+    curProgram: 4,
     texture: null,
-
     // TODO WE CAN ADD A SKYSPHERE HERE
+    lastUpdateTime: (new Date).getTime(),
 
     // changes the shader in a round robin fashion
     nextProgram: function(gl, cubies) {
@@ -172,8 +172,8 @@ var shaders_utils = {
         ADirPhi: 0,
         DTexMix: 1,
         SpecShine: 0.5,
-        DToonTh: 50,
-        SToonTh: 90,
+        DToonTh: 0.5,
+        SToonTh: 0.9,
     },
 
     // Set shader params such as light position, in/out cones, target, ambient color...
@@ -207,10 +207,10 @@ var shaders_utils = {
                 this.currShaderParams.ConeIn = 0.4;
 
                 this.currShaderParams.SpecShine = 1.0;
-                this.currShaderParams.specularColor = [0.8, 0.5, 1.0]
+                this.currShaderParams.specularColor = [0.8, 0.5, 1.0];
                 break;
             case 3:
-                // #3 - Spot light, Spherical Harm., Lambert, Toon (Phong)
+                // #3 - Spot light, Spherical Harm., Lambert, Phong specular
                 this.currShaderParams.ambientLightLowColor = [.5, .5, .5];
                 this.currShaderParams.SHLeftLightColor = [.7, 0.0, .7];
                 this.currShaderParams.SHRightLightColor = [0.0, .7, .7];
@@ -231,10 +231,61 @@ var shaders_utils = {
                 this.currShaderParams.ConeIn = 0.37;
 
                 this.currShaderParams.SpecShine = 1.0;
-                this.currShaderParams.specularColor = [0.8, 0.5, 1.0]
+                this.currShaderParams.specularColor = [0.8, 0.5, 1.0];
+                break;
+            case 4:
+                // #4 - Direct light, animated Spherical Harm., animated Toon diffuse, animated Toon (Phong)
+                this.currShaderParams.ambientLightLowColor = [1, 0, 0];
+                this.currShaderParams.SHLeftLightColor = [1, 0.0, 1];
+                this.currShaderParams.SHRightLightColor = [0.0, 1, 1];
+                this.currShaderParams.ambientLightColor = [0.0, 1, 0.0];
+
+                this.currShaderParams.lightColor = [1, 1, 1];
+
+                this.currShaderParams.Pos = [
+                    6.79,
+                    -8,
+                    7.85
+                ];
+
+                this.currShaderParams.specularColor = [.5, .5, .5];
                 break;
         }
         this.initHtmlShaderParameters();
+    },
+
+    animateShaderParams: function() {
+        var currentTime = (new Date).getTime();
+        if (this.lastUpdateTime) {
+            var deltaTime = (currentTime - this.lastUpdateTime)/1000;
+
+            switch (this.curProgram){
+                case 4:
+                    const ANIMATION_SPEED = 50;     // +10 hue/s
+                    // #4 - Direct light, animated Spherical Harm., animated Toon diffuse, animated Toon (Phong)
+                    var hsvColors = [
+                        utils.rgb2hsv(this.currShaderParams.ambientLightLowColor),
+                        utils.rgb2hsv(this.currShaderParams.SHLeftLightColor),
+                        utils.rgb2hsv(this.currShaderParams.SHRightLightColor),
+                        utils.rgb2hsv(this.currShaderParams.ambientLightColor)
+                    ];
+
+                    hsvColors[0].h = (hsvColors[0].h + deltaTime*ANIMATION_SPEED) % 360;
+                    hsvColors[1].h = (hsvColors[1].h + deltaTime*ANIMATION_SPEED) % 360;
+                    hsvColors[2].h = (hsvColors[2].h + deltaTime*ANIMATION_SPEED) % 360;
+                    hsvColors[3].h = (hsvColors[3].h + deltaTime*ANIMATION_SPEED) % 360;
+
+                    this.currShaderParams.ambientLightLowColor = utils.hsv2rgb(hsvColors[0]);
+                    this.currShaderParams.SHLeftLightColor = utils.hsv2rgb(hsvColors[1]);
+                    this.currShaderParams.SHRightLightColor = utils.hsv2rgb(hsvColors[2]);
+                    this.currShaderParams.ambientLightColor = utils.hsv2rgb(hsvColors[3]);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+        this.lastUpdateTime = currentTime;
     },
 
     // Apply current shader parameters to current program

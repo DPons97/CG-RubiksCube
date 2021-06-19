@@ -72,7 +72,7 @@ class Node {
         var dq = new Quaternion(scalar, vect_x ,0, 0);
         q = dq.mul(q);
         var rotationMatrix = q.toMatrix4();
-        console.log(rotationMatrix);
+        // console.log(rotationMatrix);
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
         var inverseTrans = utils.MakeTranslateMatrix(-this.localMatrix[3], -this.localMatrix[7], -this.localMatrix[11]);
         this.localMatrix = rotationMatrix;    
@@ -87,7 +87,7 @@ class Node {
         var dq = new Quaternion(scalar, 0, vect_y, 0);
         q = dq.mul(q);
         var rotationMatrix = q.toMatrix4();
-        console.log(rotationMatrix);
+        // console.log(rotationMatrix);
         this.localMatrix = rotationMatrix;    
     }
 
