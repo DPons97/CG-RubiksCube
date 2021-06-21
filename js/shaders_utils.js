@@ -1,12 +1,12 @@
 var shaders_utils = {
     programs: [],
-    curProgram: 4,
+    curProgram: 0,
     texture: null,
     // TODO WE CAN ADD A SKYSPHERE HERE
     lastUpdateTime: (new Date).getTime(),
 
     // changes the shader in a round robin fashion
-    nextProgram: function(gl, cubies) {
+    nextProgram: function (gl, cubies) {
         this.curProgram++;
         if (this.curProgram >= this.programs.length) this.curProgram = 0;
 
@@ -16,7 +16,7 @@ var shaders_utils = {
         this.initShaderParams();
     },
 
-    getProgram: function() {
+    getProgram: function () {
         return this.programs[this.curProgram];
     },
 
@@ -51,7 +51,7 @@ var shaders_utils = {
         emitColor: null
     },
 
-    setProgramAttribLocations: function(gl, program) {
+    setProgramAttribLocations: function (gl, program) {
         // Vertices, normals and UVs
         this.programAttribLocations.positionAttribute = gl.getAttribLocation(program, "inPosition");
         this.programAttribLocations.normalAttribute = gl.getAttribLocation(program, "inNormal");
@@ -88,31 +88,31 @@ var shaders_utils = {
         this.programAttribLocations.emitColor = gl.getUniformLocation(program, 'emitColor');
     },
 
-    initBuffers: function(gl, cubies) {
+    initBuffers: function (gl, cubies) {
         cubies.forEach((cubie) => {
             var vao = gl.createVertexArray();
             gl.bindVertexArray(vao);
             cubie.setVao(vao);
-    
+
             // Vertices coordinates
             var positionBuffer = cubie.drawInfo.vertexBuffer
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.vertices), gl.STATIC_DRAW);
             gl.enableVertexAttribArray(this.programAttribLocations.positionAttribute);
             gl.vertexAttribPointer(this.programAttribLocations.positionAttribute, 3, gl.FLOAT, false, 0, 0);
-    
+
             // Normals
             var normalBuffer = cubie.drawInfo.normalBuffer;
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubie.drawInfo.vertexNormal), gl.STATIC_DRAW);
             gl.enableVertexAttribArray(this.programAttribLocations.normalAttribute);
             gl.vertexAttribPointer(this.programAttribLocations.normalAttribute, 3, gl.FLOAT, false, 0, 0);
-    
+
             // Triangle indices
             var indexBuffer = cubie.drawInfo.indexBuffer;
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubie.drawInfo.indices), gl.STATIC_DRAW);
-    
+
             // UV coordinates
             var uvBuffer = cubie.drawInfo.textureBuffer
             gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
@@ -124,15 +124,15 @@ var shaders_utils = {
 
     currShaderParams: {
         ambientLightColor: [1.0, 1.0, 1.0],
-        diffuseColor:  [1.0, 1.0, 1.0],
-        specularColor:  [1.0, 1.0, 1.0],
-        ambientLightLowColor:  [1.0, 1.0, 1.0],
-        SHLeftLightColor:  [1.0, 1.0, 1.0],
-        SHRightLightColor:  [1.0, 1.0, 1.0],
-        ambientMatColor:  [1.0, 1.0, 1.0],
-        emitColor:  [1.0, 1.0, 1.0],
-    
-        lightColor:  [1.0, 1.0, 1.0],
+        diffuseColor: [1.0, 1.0, 1.0],
+        specularColor: [1.0, 1.0, 1.0],
+        ambientLightLowColor: [1.0, 1.0, 1.0],
+        SHLeftLightColor: [1.0, 1.0, 1.0],
+        SHRightLightColor: [1.0, 1.0, 1.0],
+        ambientMatColor: [1.0, 1.0, 1.0],
+        emitColor: [1.0, 1.0, 1.0],
+
+        lightColor: [1.0, 1.0, 1.0],
         Pos: [0, 0, 0],                 // Position of light
         DirTheta: 60,
         DirPhi: 45,
@@ -140,7 +140,7 @@ var shaders_utils = {
         ConeIn: 0.8,
         Decay: 0,
         Target: 60,
-    
+
         ADirTheta: 0,
         ADirPhi: 0,
         DTexMix: 1,
@@ -150,15 +150,26 @@ var shaders_utils = {
     },
 
     // Set shader params such as light position, in/out cones, target, ambient color...
-    initShaderParams: function() {
-        switch (this.curProgram){
+    initShaderParams: function () {
+        switch (this.curProgram) {
             case 0:
                 // #0 - Ambient color white - Default program
                 this.currShaderParams.ambientLightColor = [1.0, 1.0, 1.0];
                 break;
             case 1:
                 // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
-                
+                this.currShaderParams.ambientLightColor = [0.3, 0.7, 0.5];
+                this.currShaderParams.diffuseColor = [0.1, 0.2, 0.3]
+                this.currShaderParams.lightColor = [0.4, 0.9, 0.6];
+
+                this.currShaderParams.Pos = [
+                    5,
+                    5,
+                    5
+                ];
+
+                this.currShaderParams.SpecShine = 1.0;
+                this.currShaderParams.specularColor = [0.8, 0.5, 1.0];
                 break;
             case 2:
                 // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
@@ -175,7 +186,7 @@ var shaders_utils = {
 
                 this.currShaderParams.DirTheta = 90;
                 this.currShaderParams.DirPhi = 90;
-                
+
                 this.currShaderParams.ConeOut = 40;
                 this.currShaderParams.ConeIn = 0.4;
 
@@ -199,7 +210,7 @@ var shaders_utils = {
 
                 this.currShaderParams.DirTheta = 120;
                 this.currShaderParams.DirPhi = 129;
-                
+
                 this.currShaderParams.ConeOut = 43.8;
                 this.currShaderParams.ConeIn = 0.37;
 
@@ -227,12 +238,12 @@ var shaders_utils = {
         this.initHtmlShaderParameters();
     },
 
-    animateShaderParams: function() {
+    animateShaderParams: function () {
         var currentTime = (new Date).getTime();
         if (this.lastUpdateTime) {
-            var deltaTime = (currentTime - this.lastUpdateTime)/1000;
+            var deltaTime = (currentTime - this.lastUpdateTime) / 1000;
 
-            switch (this.curProgram){
+            switch (this.curProgram) {
                 case 4:
                     const ANIMATION_SPEED = 50;     // +10 hue/s
                     // #4 - Direct light, animated Spherical Harm., animated Toon diffuse, animated Toon (Phong)
@@ -243,10 +254,10 @@ var shaders_utils = {
                         utils.rgb2hsv(this.currShaderParams.ambientLightColor)
                     ];
 
-                    hsvColors[0].h = (hsvColors[0].h + deltaTime*ANIMATION_SPEED) % 360;
-                    hsvColors[1].h = (hsvColors[1].h + deltaTime*ANIMATION_SPEED) % 360;
-                    hsvColors[2].h = (hsvColors[2].h + deltaTime*ANIMATION_SPEED) % 360;
-                    hsvColors[3].h = (hsvColors[3].h + deltaTime*ANIMATION_SPEED) % 360;
+                    hsvColors[0].h = (hsvColors[0].h + deltaTime * ANIMATION_SPEED) % 360;
+                    hsvColors[1].h = (hsvColors[1].h + deltaTime * ANIMATION_SPEED) % 360;
+                    hsvColors[2].h = (hsvColors[2].h + deltaTime * ANIMATION_SPEED) % 360;
+                    hsvColors[3].h = (hsvColors[3].h + deltaTime * ANIMATION_SPEED) % 360;
 
                     this.currShaderParams.ambientLightLowColor = utils.hsv2rgb(hsvColors[0]);
                     this.currShaderParams.SHLeftLightColor = utils.hsv2rgb(hsvColors[1]);
@@ -262,7 +273,7 @@ var shaders_utils = {
     },
 
     // Apply current shader parameters to current program
-    setProgramShaderParams: function(gl, cubie, cameraPosition, viewProjectionMatrix) {
+    setProgramShaderParams: function (gl, cubie, cameraPosition, viewProjectionMatrix) {
         // Vertex shader
         var projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, cubie.worldMatrix);
         var normalMatrix = utils.invertMatrix(utils.transposeMatrix(cubie.worldMatrix));
@@ -304,16 +315,16 @@ var shaders_utils = {
     },
 
     // Initialize shader parameters in html page
-    initHtmlShaderParameters: function() {
+    initHtmlShaderParameters: function () {
         document.getElementById("texP").value = this.currShaderParams.DTexMix;
-        
+
         document.getElementById("posX").value = this.currShaderParams.Pos[0];
         document.getElementById("posY").value = this.currShaderParams.Pos[1];
         document.getElementById("posZ").value = this.currShaderParams.Pos[2];
 
         document.getElementById("dirT").value = this.currShaderParams.DirPhi;
         document.getElementById("dirP").value = this.currShaderParams.DirTheta;
-        
+
         document.getElementById("coneIn").value = this.currShaderParams.ConeIn;
         document.getElementById("coneOut").value = this.currShaderParams.ConeOut;
     }

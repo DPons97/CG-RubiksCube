@@ -96,13 +96,13 @@ async function main() {
                 rubik.pushRotation("C");
                 break;
             case "KeyF": // F for front face
-                rubik.pushRotation("F");   
+                rubik.pushRotation("F");
                 break;
             case "KeyB": // B for back face
                 rubik.pushRotation("B");
                 break;
             case "KeyH": // H for central face parallel to F and B
-                rubik.pushRotation("H");               
+                rubik.pushRotation("H");
                 break;
             case "KeyR": // R for right face
                 rubik.pushRotation("R");
@@ -203,7 +203,7 @@ async function main() {
 
         shaders_utils.currShaderParams.DirPhi = document.getElementById("dirT").value;
         shaders_utils.currShaderParams.DirTheta = document.getElementById("dirP").value;
-        
+
         shaders_utils.currShaderParams.ConeIn = document.getElementById("coneIn").value;
         shaders_utils.currShaderParams.ConeOut = document.getElementById("coneOut").value;
     }
@@ -233,7 +233,12 @@ async function init() {
     });
 
     // #1 - Direct light, Ambient, Lambert diffuse, Phong specular
-    
+    await utils.loadFiles([shaderDir + 'vs1.glsl', shaderDir + 'fs1.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+        shaders_utils.programs[1] = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
+
     // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
     await utils.loadFiles([shaderDir + 'vs2.glsl', shaderDir + 'fs2.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
