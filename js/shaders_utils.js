@@ -2,7 +2,12 @@ var shaders_utils = {
     programs: [],
     curProgram: 0,
     texture: null,
-    // TODO WE CAN ADD A SKYSPHERE HERE
+
+    // Skybox
+    skyboxProgram: null,
+    skyboxTexture: null,
+    
+    // Animation
     lastUpdateTime: (new Date).getTime(),
 
     // changes the shader in a round robin fashion
@@ -18,6 +23,10 @@ var shaders_utils = {
 
     getProgram: function () {
         return this.programs[this.curProgram];
+    },
+
+    getSkyboxProgram: function () {
+        return this.skyboxProgram;
     },
 
     programAttribLocations: {
@@ -86,6 +95,19 @@ var shaders_utils = {
         this.programAttribLocations.SToonTh = gl.getUniformLocation(program, 'SToonTh');
         this.programAttribLocations.ambientMatColor = gl.getUniformLocation(program, 'ambientMatColor');
         this.programAttribLocations.emitColor = gl.getUniformLocation(program, 'emitColor');
+    },
+
+    skyboxAttribLocations: {
+        skyboxTexHandle: null,
+        skyboxVertPosAttr: null,
+        inverseViewProjMatrixHandle: null
+    },
+
+    getSkyboxAttributesAndUniforms: function (gl) {
+        //Uniforms
+        this.skyboxAttribLocations.skyboxTexHandle = gl.getUniformLocation(this.skyboxProgram, "u_texture"); 
+        this.skyboxAttribLocations.inverseViewProjMatrixHandle = gl.getUniformLocation(this.skyboxProgram, "inverseViewProjMatrix"); 
+        this.skyboxAttribLocations.skyboxVertPosAttr = gl.getAttribLocation(this.skyboxProgram, "in_position");
     },
 
     initBuffers: function (gl, cubies) {
@@ -204,8 +226,8 @@ var shaders_utils = {
 
                 this.currShaderParams.Pos = [
                     5.3,
-                    -7.73,
-                    -3.83
+                    -3.09,
+                    -6.31
                 ];
 
                 this.currShaderParams.DirTheta = 120;
@@ -227,9 +249,9 @@ var shaders_utils = {
                 this.currShaderParams.lightColor = [1, 1, 1];
 
                 this.currShaderParams.Pos = [
-                    6.79,
-                    -8,
-                    7.85
+                    6.08,
+                    7.14,
+                    -6.66
                 ];
 
                 this.currShaderParams.specularColor = [.5, .5, .5];
@@ -327,5 +349,88 @@ var shaders_utils = {
 
         document.getElementById("coneIn").value = this.currShaderParams.ConeIn;
         document.getElementById("coneOut").value = this.currShaderParams.ConeOut;
+    },
+
+    // Skybox
+    LoadEnvironment: function(gl, baseDir) {
+        skyboxVertPos = new Float32Array(
+        [
+          -1, -1, 1.0,
+           1, -1, 1.0,
+          -1,  1, 1.0,
+          -1,  1, 1.0,
+           1, -1, 1.0,
+           1,  1, 1.0,
+        ]);
+        
+        skyboxVao = gl.createVertexArray();
+        gl.bindVertexArray(skyboxVao);
+        
+        var positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, skyboxVertPos, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(this.skyboxAttribLocations.skyboxVertPosAttr);
+        gl.vertexAttribPointer(this.skyboxAttribLocations.skyboxVertPosAttr, 3, gl.FLOAT, false, 0, 0);
+        
+        this.skyboxTexture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0+3);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
+        
+        var envTexDir = baseDir+"env/";     
+        const faceInfos = [
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, 
+                url: envTexDir+'posx.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 
+                url: envTexDir+'negx.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 
+                url: envTexDir+'posy.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 
+                url: envTexDir+'negy.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 
+                url: envTexDir+'posz.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 
+                url: envTexDir+'negz.jpg',
+            },
+        ];
+        faceInfos.forEach((faceInfo) => {
+            const {target, url} = faceInfo;
+            
+            // Upload the canvas to the cubemap face.
+            const level = 0;
+            const internalFormat = gl.RGBA;
+            const width = 1024;
+            const height = 1024;
+            const format = gl.RGBA;
+            const type = gl.UNSIGNED_BYTE;
+            
+            // setup each face so it's immediately renderable
+            gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
+            
+            // Asynchronously load an image
+            const image = new Image();
+            image.src = url;
+            image.addEventListener('load', function() {
+                // Now that the image has loaded upload it to the texture.
+                gl.activeTexture(gl.TEXTURE0+3);
+                gl.bindTexture(gl.TEXTURE_CUBE_MAP, shaders_utils.skyboxTexture);
+                gl.texImage2D(target, level, internalFormat, format, type, image);
+                gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+            });
+        
+            
+        });
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     }
 }

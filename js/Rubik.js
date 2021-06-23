@@ -27,7 +27,7 @@ function float_equal(a, b) { // maybe move in a utils file if needed elsewhere
 export default class Rubik extends Node {
 
     constructor(cubies) {
-        super()
+        super();
         //this.programs = programs;
         this.curProgram = 0;
         this.isShift = false;

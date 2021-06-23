@@ -1,6 +1,7 @@
 var gl;
 var shaderDir;
 var baseDir;
+var camera;
 var viewMatrix;
 var cameraMatrix;
 var rubik;
@@ -8,6 +9,7 @@ var cubies = [];
 
 import Rubik from './Rubik.js';
 import Cubie from './Cubie.js';
+import Camera from './Camera.js';
 
 async function loadModel(modelName) {
     //This line must be in an async function
@@ -76,8 +78,15 @@ async function main() {
         gl.generateMipmap(gl.TEXTURE_2D);
     };
 
-    rubik = new Rubik(cubies)
+    // Skybox
+    shaders_utils.getSkyboxAttributesAndUniforms(gl);
+
+    // Rubik node
+    rubik = new Rubik(cubies);
     rubik.initKeyBinds();
+
+    // Camera
+    camera =  new Camera();
 
     document.onkeydown = function (e) {
         console.log("Key down: " + e.code);
@@ -85,6 +94,7 @@ async function main() {
             case "ShiftLeft":
             case "ShiftRight":
                 if (!rubik.isShift) rubik.isShift = true;
+                if (!camera.isShift) camera.isShift = true;
                 break;
             case "KeyU": // U for up face
                 rubik.pushRotation("U");
@@ -114,16 +124,32 @@ async function main() {
                 rubik.pushRotation("M");
                 break;
             case "ArrowDown": // Arrows to rotate whole cube
-                rubik.rotateCubeX(true)
+                if (camera.isShift) {
+                    camera.rotateCameraX(true);
+                } else {
+                    rubik.rotateCubeX(true);
+                }
                 break;
             case "ArrowUp": // Arrows to rotate whole cube
-                rubik.rotateCubeX(false)
+                if (camera.isShift) {
+                    camera.rotateCameraX(false);
+                } else {
+                    rubik.rotateCubeX(false);
+                }
                 break;
             case "ArrowRight": // Arrows to rotate whole cube
-                rubik.rotateCubeY(true)
+                if (camera.isShift) {
+                    camera.rotateCameraY(true);
+                } else {
+                    rubik.rotateCubeY(true);
+                }
                 break;
             case "ArrowLeft": // Arrows to rotate whole cube
-                rubik.rotateCubeY(false)
+                if (camera.isShift) {
+                    camera.rotateCameraY(false);
+                } else {
+                    rubik.rotateCubeY(false);
+                }       
                 break;
             case "Space":
                 shaders_utils.nextProgram(gl, cubies);
@@ -143,6 +169,7 @@ async function main() {
             case "ShiftLeft":
             case "ShiftRight":
                 rubik.isShift = false;
+                camera.isShift = false;
                 break;
             default:
                 break;
@@ -150,6 +177,22 @@ async function main() {
     }
 
     drawScene();
+
+    function DrawSkybox(perspectiveMatrix){
+        gl.useProgram(shaders_utils.getSkyboxProgram());
+        
+        gl.activeTexture(gl.TEXTURE0+3);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, shaders_utils.skyboxTexture);
+        gl.uniform1i(shaders_utils.skyboxAttribLocations.skyboxTexHandle, 3);
+        
+        var viewProjMat = utils.multiplyMatrices(perspectiveMatrix, viewMatrix);
+        var inverseViewProjMatrix = utils.invertMatrix(viewProjMat);
+        gl.uniformMatrix4fv(shaders_utils.skyboxAttribLocations.inverseViewProjMatrixHandle, gl.FALSE, utils.transposeMatrix(inverseViewProjMatrix));
+        
+        gl.bindVertexArray(skyboxVao);
+        gl.depthFunc(gl.LEQUAL);
+        gl.drawArrays(gl.TRIANGLES, 0, 1*6);
+    }
 
     function drawScene() {
         // RESET THE SCENE
@@ -161,10 +204,13 @@ async function main() {
         var projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
 
         // Compute the camera matrix using look at.
-        var cameraPosition = [5, -10, 5];
-        var target = [0.0, 0.0, 0.0];
-        var up = [0.0, 0.0, 1.0];
-        cameraMatrix = utils.LookAt(cameraPosition, target, up);
+        var cameraPosition = [
+            camera.worldMatrix[3],
+            camera.worldMatrix[7],
+            camera.worldMatrix[11]
+        ];
+
+        cameraMatrix = utils.LookAt(cameraPosition, camera.target, camera.up);
         viewMatrix = utils.invertMatrix(cameraMatrix);
 
         var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
@@ -178,6 +224,7 @@ async function main() {
         if (!isAnimating) rubik.checkQueue();
 
         rubik.updateWorldMatrix();
+        camera.updateWorldMatrix();
         gl.useProgram(shaders_utils.getProgram());
 
         // Compute all the matrices for rendering
@@ -190,6 +237,7 @@ async function main() {
             gl.drawElements(gl.TRIANGLES, cubie.drawInfo.indices.length, gl.UNSIGNED_SHORT, 0);
         });
 
+        DrawSkybox(projectionMatrix);
         window.requestAnimationFrame(drawScene);
     }
 
@@ -260,6 +308,15 @@ async function init() {
         //shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
         shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
     });
+
+    await utils.loadFiles([shaderDir + 'skybox_vs.glsl', shaderDir + 'skybox_fs.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+
+        shaders_utils.skyboxProgram = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
+
+    shaders_utils.LoadEnvironment(gl, baseDir);
 
     main();
 }
