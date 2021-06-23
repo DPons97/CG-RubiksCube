@@ -380,27 +380,27 @@ var shaders_utils = {
         const faceInfos = [
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, 
-                url: envTexDir+'posx.jpg',
+                url: envTexDir+'posx.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 
-                url: envTexDir+'negx.jpg',
+                url: envTexDir+'negx.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 
-                url: envTexDir+'posy.jpg',
+                url: envTexDir+'posy.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 
-                url: envTexDir+'negy.jpg',
+                url: envTexDir+'negy.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 
-                url: envTexDir+'posz.jpg',
+                url: envTexDir+'posz.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 
-                url: envTexDir+'negz.jpg',
+                url: envTexDir+'negz.png',
             },
         ];
         faceInfos.forEach((faceInfo) => {
