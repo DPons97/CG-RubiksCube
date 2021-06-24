@@ -127,14 +127,14 @@ async function main() {
                 if (camera.isShift) {
                     camera.rotateCameraX(true);
                 } else {
-                    rubik.rotateCubeX(true);
+                    rubik.rotateCubeX(false);
                 }
                 break;
             case "ArrowUp": // Arrows to rotate whole cube
                 if (camera.isShift) {
                     camera.rotateCameraX(false);
                 } else {
-                    rubik.rotateCubeX(false);
+                    rubik.rotateCubeX(true);
                 }
                 break;
             case "ArrowRight": // Arrows to rotate whole cube
