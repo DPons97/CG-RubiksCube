@@ -66,15 +66,13 @@ void main() {
     // --------- START Code for lights composition ---------
 
 
-
     // --------- END LIGHT COMPOSITION ---------
 
     // BRDF out color
     vec4 out_color;    
     
     // --------- START Code for BRDF ---------
-
-
+    
 
     // --------- END BRDF ---------
 

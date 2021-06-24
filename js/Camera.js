@@ -11,7 +11,7 @@ export default class Camera extends Node {
     }
 
     rotateCameraY(positive) {
-        var delta = positive ? CAMERA_ROT_SPEEED : -CAMERA_ROT_SPEEED;
+        var delta = positive ? -CAMERA_ROT_SPEEED : CAMERA_ROT_SPEEED;
         this.localMatrix = utils.multiplyMatrices(utils.MakeRotateYMatrix(delta), this.localMatrix);
     }
 }
