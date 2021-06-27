@@ -33,7 +33,7 @@ var utils = {
     resizeCanvasToPercentageDisplaySize: function (canvas, percentage) {
         const expand = () => {
             canvas.width = window.innerWidth * percentage;
-            canvas.height = window.innerHeight * percentage;
+            canvas.height = window.innerHeight * 0.99;
             console.log(canvas.width + " " + window.innerWidth);
 
         };
