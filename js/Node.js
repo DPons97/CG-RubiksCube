@@ -146,6 +146,8 @@ class Node {
             if (Math.abs(this.deltaAngleX) > 0) {
                 isAnimating = true;
                 if (this.deltaAngleX < 0) deltaAngle = -deltaAngle;
+
+                // Limits rotation to final position
                 if (Math.abs(this.deltaAngleX) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleX;
 
                 // Multiply local matrix for a rotation around X axis through [0,0,0] (need to change rotation axis wrt local matrix)
@@ -155,6 +157,8 @@ class Node {
             } else if (Math.abs(this.deltaAngleY) > 0) {
                 isAnimating = true;
                 if (this.deltaAngleY < 0) deltaAngle = -deltaAngle;
+
+                // Limits rotation to final position
                 if (Math.abs(this.deltaAngleY) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleY;
 
                 // Multiply local matrix for a rotation around Y axis through [0,0,0] (need to change rotation axis wrt local matrix) 
@@ -164,6 +168,8 @@ class Node {
             } else if (Math.abs(this.deltaAngleZ) > 0) {
                 isAnimating = true;
                 if (this.deltaAngleZ < 0) deltaAngle = -deltaAngle;
+                
+                // Limits rotation to final position
                 if (Math.abs(this.deltaAngleZ) < Math.abs(deltaAngle)) deltaAngle = this.deltaAngleZ;
 
                 // Multiply local matrix for a rotation around Z axis through [0,0,0] (need to change rotation axis wrt local matrix)
@@ -175,7 +181,7 @@ class Node {
         }
         this.lastUpdateTime = currentTime;
 
-        this.children.forEach(c => c.animate(deltaT)); // need to make sure delta T is same foreach cubies or rotation fucks up
+        this.children.forEach(c => c.animate(deltaT)); // need to make sure delta T is same foreach cubies or rotation breaks
 
     }
 }

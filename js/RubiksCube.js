@@ -33,6 +33,7 @@ async function main() {
     gl.clearColor(0.85, 0.85, 0.85, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
 
     // #0 - Ambient color white - Default program
     shaders_utils.setProgramAttribLocations(gl, shaders_utils.getProgram());
@@ -83,7 +84,6 @@ async function main() {
 
     // Rubik node
     rubik = new Rubik(cubies);
-    rubik.initKeyBinds();
 
     // Camera
     camera =  new Camera();
@@ -183,7 +183,8 @@ async function main() {
         
         gl.bindVertexArray(skyboxVao);
         gl.depthFunc(gl.LEQUAL);
-        gl.drawArrays(gl.TRIANGLES, 0, 1*6);
+        // 2 triangles - 3 vertices per triangle
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
     function drawScene() {
@@ -297,10 +298,10 @@ async function init() {
     await utils.loadFiles([shaderDir + 'vs4.glsl', shaderDir + 'fs4.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-        //shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
         shaders_utils.programs[4] = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
+    // Skybox shader
     await utils.loadFiles([shaderDir + 'skybox_vs.glsl', shaderDir + 'skybox_fs.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);

@@ -40,12 +40,6 @@ export default class Rubik extends Node {
     }
 }
 
-// initializes key binds
-Rubik.prototype.initKeyBinds = function() {
-        document.onkeydown = this.processKeyDown;
-        document.onkeyup = this.processKeyUp;
-}
-
 Rubik.prototype.pushRotation = function(move){
     if (this.queue.length> MAX_QUEUED_MOVES) return;
     if (!this.isShift) this.queue.push([move,1]);

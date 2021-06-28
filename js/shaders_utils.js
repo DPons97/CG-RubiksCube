@@ -195,8 +195,8 @@ var shaders_utils = {
                 break;
             case 2:
                 // #2 - Spot light, Hemispheric, Lambert diffuse, Blinn specular
-                this.currShaderParams.ambientLightLowColor = [.5, .8, .7];
-                this.currShaderParams.ambientLightColor = [.8, 0.7, 0.5];
+                this.currShaderParams.ambientLightLowColor = [.9, .2, .1];
+                this.currShaderParams.ambientLightColor = [.1, 0.9, 0.2];
 
                 this.currShaderParams.lightColor = [0.3, 0.1, 0.4];
 
@@ -353,6 +353,7 @@ var shaders_utils = {
 
     // Skybox
     LoadEnvironment: function(gl, baseDir) {
+        // two triangles divide the screen space
         skyboxVertPos = new Float32Array(
         [
           -1, -1, 1.0,
